@@ -7,14 +7,14 @@ BlogJS is a simple blog application built with AngularJS, Node.js and MongoDB. C
 
 ## Features
 
-[x] Create Article
-[x] Edit Article
-[x] Delete Article
-[x] Add tags to Article
-[x] Create permalink manually for article
-[ ] Create permaling automatically from the title
-[ ] Add Authentication to the administration
-[ ] Add snapshot for Google Crawling bot
+- [x] Create Article
+- [x] Edit Article
+- [x] Delete Article
+- [x] Add tags to Article
+- [x] Create permalink manually for article
+- [ ] Create permaling automatically from the title
+- [ ] Add Authentication to the administration
+- [ ] Add snapshot for Google Crawling bot
 
 ## Installation
 
