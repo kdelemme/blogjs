@@ -1,0 +1,21 @@
+<section class="post" ng-repeat="post in posts">
+    <header class="post-header">
+        <img class="post-avatar" alt="Kevin Delemme" height="52" width="52" src="img/avatar.jpg">
+        <h2 class="post-title"><a href="#!/post/{{post.url}}">{{post.title}}</a></h2>
+        <div class="post-meta"><i class="fa fa-bullseye"></i> Posted on {{post.created | date:'medium'}}</div>
+        <div class="post-meta">
+            <ul class="list-inline">
+                <i class="fa fa-tags"></i> 
+                <li ng-repeat="tag in post.tags">
+                    <a class="label label-success" href="#!/tag/{{tag}}">{{tag}}</a>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <div class="post-content">
+        <p ng-bind-html="post.content">
+            {{post.content}}
+        </p>
+        <a href="#!/post/{{post.url}}" class="btn btn-primary">Read More</a>
+    </div>
+</section>

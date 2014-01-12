@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Blog about personal projects written mostly in JavaScript with AngularJS and Node.js. MongoDB is a guest too.">
+    <meta name="author" content="Kevin Delemme">
+    <meta name="fragment" content="!">
+
+    <title>Kevin Delemme - JavaScript Addict - Personal projects written mostly with AngularJS, Node.js and MongoDB</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="css/style.css?1" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="lib/wysiwyg/css/bootstrap3-wysiwyg5.css?1" rel="stylesheet">
+
+  </head>
+  
+    <body ng-app="app">
+
+        <div class="container col-sm-12">
+
+            <header class="header">
+                <h1 class="header-title">
+                    <a href="#!/">
+                        <i class="fa fa-code"></i> Kevin Delemme
+                    </a>
+                </h1>
+            </header>
+
+            <div ng-view></div>
+            
+        </div>
+
+        <script src="lib/angular/angular.min.js"></script>
+        <script src="lib/angular/angular-route.min.js"></script>
+        <script src="lib/jquery/jquery-2.0.3.min.js"></script>
+        <script src="lib/bootstrap/bootstrap.min.js"></script>
+        <script src="js/app.js?1"></script>
+        <script src="js/controllers.js?1"></script>
+        <script src="lib/wysiwyg/js/wysihtml5-0.3.0.min.js"></script>
+        <script src="lib/wysiwyg/js/bootstrap3-wysihtml5.js"></script>
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-46674011-1', 'kdelemme.com');
+            ga('send', 'pageview');
+        </script>
+    </body>
+</html>
