@@ -22,9 +22,11 @@ Get the sources with `git clone https://github.com/kdelemme/blogjs.git`
 
 ## Run
 
-Go to the api folder and install the dependencies: `npm install bcrypt express mongoose zombie`
+Go to the api folder and install the dependencies: `npm install bcrypt express mongoose zombie passport passport-local`
 
 Edit api/blog.js and replace the value of Access-Control-Allow-Origin to match your server
+
+Edit api/route/users.js and replace `user.username = "YOUR_USERNAME";` and `user.password = "YOUR_PASSWORD";` with your username and password. After the first launch, delete those lines and restart the nodejs application.
 
 Edit app/js/app.js and replace the value of options.api.base_url to match your server.
 
@@ -32,7 +34,7 @@ Then, run the Node.js application: `node blog.js`
 
 You can now open your browser: `http://localhost/blogjs/app`
 
-To access the Administration, go to `http://localhost/blogjs/app/#!/admin`
+To access the Administration, go to `http://localhost/blogjs/app/#/admin`
 
 ## Stack
 

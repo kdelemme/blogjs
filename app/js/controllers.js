@@ -106,11 +106,12 @@ appControllers.controller('AdminPostCreateCtrl', ['$scope', '$http', '$location'
 
 		$scope.save = function save(post, shouldPublish) {
 			if (post !== undefined 
-				&& post.title !== undefined && post.title != "" 
-				&& post.url !== undefined && post.url != "") {
+				&& post.title !== undefined 
+				&& post.url !== undefined
+				&& post.tags != undefined) {
 
 				var content = $('#textareaContent').val();
-				if (content !== undefined && content != "") {
+				if (content !== undefined) {
 					post.content = content;
 
 					if (shouldPublish !== undefined && shouldPublish == true) {
@@ -180,16 +181,28 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$http
 	}
 ]);
 
-appControllers.controller('AdminUserCtrl', ['$scope', '$http', '$location', 
-	function AdminUserCtrl($scope, $http, $location) {
+appControllers.controller('AdminUserCtrl', ['$scope', '$http', '$location', 'AuthenticationService', 
+	function AdminUserCtrl($scope, $http, $location, AuthenticationService) {
 
 		//Admin User Controller (login, logout)
-		$scope.logIn = function logIn(email, password) {
+		$scope.logIn = function logIn(username, password) {
+			if (username !== undefined && password !== undefined) {
 
+				$http.post(options.api.base_url + '/login', {username: username, password: password}, {withCredentials: true}).success(function(data) {
+					AuthenticationService.isLogged = true;
+					$location.path("/admin");
+				}).error(function(status, data) {
+					console.log(status);
+					console.log(data);
+				});
+			}
 		}
 
 		$scope.logout = function logout() {
-
+			if (AuthenticationService.isLogged) {
+				AuthenticationService.isLogged = false;
+				$location.path("/");
+			}
 		}
 	}
 ]);
