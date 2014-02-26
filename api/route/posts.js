@@ -6,7 +6,7 @@ exports.list = function(req, res) {
 		query = {is_published: true};
 	}
 
-	db.postModel.find(query, function(err, results) {
+	db.postModel.find(query, null, {sort : {created: -1}}, function(err, results) {
   		if (err) {
   			console.log(err);
   			return res.send(400);
@@ -154,7 +154,7 @@ exports.listByTag = function(req, res) {
 	}
 
 
-	db.postModel.find(query, function(err, results) {
+	db.postModel.find(query, null, {sort : {created: -1}}, function(err, results) {
   		if (err) {
   			console.log(err);
   			return res.send(400);
