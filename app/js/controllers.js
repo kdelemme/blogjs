@@ -38,7 +38,6 @@ appControllers.controller('AdminPostListCtrl', ['$scope', '$http', '$location', 
 	function AdminPostListCtrl($scope, $http, $location, $timeout) {
 
 		$scope.posts = [];
-		$scope.message = {is_error: false, is_success: false, message: ""};
 
 		//Get id, title, date_created, is_published, number of Read
 		$http.get(options.api.base_url + '/post', {withCredentials: true}).success(function(data) {
@@ -56,11 +55,9 @@ appControllers.controller('AdminPostListCtrl', ['$scope', '$http', '$location', 
 			    			return ;
 			    		}
 		    		}
-
-		    		updateMessage(true, "Nice job! Keep going ;)");
-
 				}).error(function(status, data) {
-					updateMessage(false, "Oups! Things went wrong...");
+					console.log(status);
+					console.log(data);
 				});
 			}
 		}
@@ -77,23 +74,11 @@ appControllers.controller('AdminPostListCtrl', ['$scope', '$http', '$location', 
 			    			return ;
 			    		}
 		    		}
-
-		    		updateMessage(true, "Nice job! Keep going ;)");
 				}).error(function(status, data) {
-					updateMessage(false, "Oups! Things went wrong...");
+					console.log(status);
+					console.log(data);
 				});
 			}
-		}
-
-		var updateMessage = function(is_success, message) {
-			$scope.message.is_error = !is_success;
-			$scope.message.is_succes = is_success;
-			$scope.message.message = message;
-
-			$timeout(function() {
-				$scope.message.is_error = false;
-				$scope.message.is_success = false;	
-			}, 3000);
 		}
 	}
 ]);

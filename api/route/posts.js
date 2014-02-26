@@ -1,10 +1,8 @@
 var db = require('../config/database.js');
 
-var isAdmin = true;
-
 exports.list = function(req, res) {
 	query = {};
-	if (!isAdmin) {
+	if (!req.isAuthenticated()) {
 		query = {is_published: true};
 	}
 
@@ -17,7 +15,7 @@ exports.list = function(req, res) {
   		//Do not display the whole post
   		for (var postKey in results) {
     		results[postKey].content = results[postKey].content.substr(0, 400) + '...';
-    		if (!isAdmin) {
+    		if (!req.isAuthenticated()) {
     			results[postKey].read = undefined;
     			results[postKey].updated = undefined;
     			results[postKey].is_published = undefined;
@@ -33,17 +31,16 @@ exports.list = function(req, res) {
 exports.read = function(req, res) {
 	var url = req.params.url;
 	if (url === undefined) {
-		return res.json(400);
+		return res.send(400);
 	}
 
-	//TODO Update MongoDB document: inc read_counter
 	db.postModel.findOne({url: url}, function(err, result) {
 		if (err) {
 			console.log(err);
 			return res.send(400);
 		}
 
-		if (!isAdmin) {
+		if (!req.isAuthenticated()) {
 			result.read = undefined;
 			result.updated = undefined;
 			result.is_published = undefined;
@@ -151,6 +148,11 @@ exports.listByTag = function(req, res) {
 	}
 
 	query = { tags: tagName };
+
+	if (!req.isAuthenticated()) {
+		query.is_published = true;
+	}
+
 
 	db.postModel.find(query, function(err, results) {
   		if (err) {

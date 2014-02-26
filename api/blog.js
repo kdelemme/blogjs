@@ -10,7 +10,7 @@ var routes = {};
 routes.posts = require('./route/posts.js');
 routes.users = require('./route/users.js');
 
-app.use(express.compress());
+//app.use(express.compress());
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.logger());
@@ -41,7 +41,7 @@ app.get('/post', routes.posts.list);
 app.get('/post/:url', routes.posts.read);
 
 /* 
-	Create a new post
+	Create a new post. Require data + authentication
 */
 app.post('/post', authentication.userIsAuthenticated, routes.posts.create);
 
