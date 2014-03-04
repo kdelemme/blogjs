@@ -1,53 +1,52 @@
-appControllers.controller('PostListCtrl', ['$scope', '$http', '$location', '$sce',
-	function PostListCtrl($scope, $http, $location, $sce) {
+appControllers.controller('PostListCtrl', ['$scope', '$http', '$location', '$sce', 'PostService',
+	function PostListCtrl($scope, $http, $location, $sce, PostService) {
 
 		$scope.posts = [];
 
-		$http.get(options.api.base_url + '/post', {withCredentials: true}).success(function(data) {
+		PostService.findAll().success(function(data) {
 			for (var postKey in data) {
 				data[postKey].content = $sce.trustAsHtml(data[postKey].content);
 			}
-			$scope.posts = data;
 
+			$scope.posts = data;			
 		}).error(function(data, status) {
 			console.log(status);
 			console.log(data);
 		});
-		
 	}
 ]);
 
-appControllers.controller('PostViewCtrl', ['$scope', '$routeParams', '$http', '$location', '$sce',
-	function PostViewCtrl($scope, $routeParams, $http, $location, $sce) {
+appControllers.controller('PostViewCtrl', ['$scope', '$routeParams', '$http', '$location', '$sce', 'PostService',
+	function PostViewCtrl($scope, $routeParams, $http, $location, $sce, PostService) {
 
 		$scope.post = {};
 		var post_url = $routeParams.postUrl;
 
-		$http.get(options.api.base_url + '/post/' + post_url, {withCredentials: true}).success(function(data) {
+		PostService.read(post_url).success(function(data) {
 			data.content = $sce.trustAsHtml(data.content);
 			$scope.post = data;
 		}).error(function(data, status) {
 			console.log(status);
 			console.log(data);
-		})
+		});
 	}
 ]);
 
 
-appControllers.controller('AdminPostListCtrl', ['$scope', '$http', '$location', '$timeout',
-	function AdminPostListCtrl($scope, $http, $location, $timeout) {
+appControllers.controller('AdminPostListCtrl', ['$scope', '$http', '$location', '$timeout', 'PostService', 
+	function AdminPostListCtrl($scope, $http, $location, $timeout, PostService) {
 
 		$scope.posts = [];
 
 		//Get id, title, date_created, is_published, number of Read
-		$http.get(options.api.base_url + '/post', {withCredentials: true}).success(function(data) {
+		PostService.findAll().success(function(data) {
 			$scope.posts = data;
 		});
 
 		$scope.updatePublishState = function updatePublishState(post, shouldPublish) {
 			if (post !== undefined && shouldPublish !== undefined) {
 
-				$http.put(options.api.base_url + '/post', {'post': {_id: post._id, is_published: shouldPublish}}, {withCredentials: true}).success(function(data) {
+				PostService.changePublishState(post._id, shouldPublish).success(function(data) {
 					var posts = $scope.posts;
 					for (var postKey in posts) {
 			    		if (posts[postKey]._id == post._id) {
@@ -66,7 +65,7 @@ appControllers.controller('AdminPostListCtrl', ['$scope', '$http', '$location', 
 		$scope.deletePost = function deletePost(post) {
 			if (post != undefined) {
 
-				$http.delete(options.api.base_url + '/post/' + post._id, {withCredentials: true}).success(function(data) {
+				PostService.delete(post._id).success(function(data) {
 					var posts = $scope.posts;
 					for (var postKey in posts) {
 			    		if (posts[postKey]._id == post._id) {
@@ -83,8 +82,8 @@ appControllers.controller('AdminPostListCtrl', ['$scope', '$http', '$location', 
 	}
 ]);
 
-appControllers.controller('AdminPostCreateCtrl', ['$scope', '$http', '$location', 
-	function AdminPostCreateCtrl($scope, $http, $location) {
+appControllers.controller('AdminPostCreateCtrl', ['$scope', '$http', '$location', 'PostService',
+	function AdminPostCreateCtrl($scope, $http, $location, PostService) {
 
 		$scope.message = {is_error: false, is_success: false, message: ""};
 		$('#textareaContent').wysihtml5({"font-styles": false});
@@ -105,7 +104,7 @@ appControllers.controller('AdminPostCreateCtrl', ['$scope', '$http', '$location'
 						post.is_published = false;
 					}
 
-					$http.post(options.api.base_url + '/post', {'post': post}, {withCredentials: true}).success(function(data) {
+					PostService.create(post).success(function(data) {
 						$location.path("/admin");
 					}).error(function(status, data) {
 						console.log(status);
@@ -117,15 +116,15 @@ appControllers.controller('AdminPostCreateCtrl', ['$scope', '$http', '$location'
 	}
 ]);
 
-appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$http', '$location', '$sce',
-	function AdminPostEditCtrl($scope, $routeParams, $http, $location, $sce) {
+appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$http', '$location', '$sce', 'PostService',
+	function AdminPostEditCtrl($scope, $routeParams, $http, $location, $sce, PostService) {
 
 		$scope.message = {is_error: false, is_success: false, message: ""};
 
 		$scope.post = {};
 		var postUrl = $routeParams.postUrl;
 
-		$http.get(options.api.base_url + '/post/' + postUrl, {withCredentials: true}).success(function(data) {
+		PostService.read(postUrl).success(function(data) {
 			$scope.post = data;
 			$('#textareaContent').wysihtml5({"font-styles": false});
 			$('#textareaContent').val($sce.trustAsHtml(data.content));
@@ -154,7 +153,7 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$http
 						post.tags = post.tags.split(',');
 					}
 					
-					$http.put(options.api.base_url + '/post', {'post': post}, {withCredentials: true}).success(function(data) {
+					PostService.update(post).success(function(data) {
 						$location.path("/admin");
 					}).error(function(status, data) {
 						console.log(status);
@@ -193,13 +192,13 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$http', '$location', 'Aut
 ]);
 
 
-appControllers.controller('PostListTagCtrl', ['$scope', '$routeParams', '$http', '$location', '$sce',
-	function PostListTagCtrl($scope, $routeParams, $http, $location, $sce) {
+appControllers.controller('PostListTagCtrl', ['$scope', '$routeParams', '$http', '$location', '$sce', 'PostService',
+	function PostListTagCtrl($scope, $routeParams, $http, $location, $sce, PostService) {
 
 		$scope.posts = [];
 		var tagName = $routeParams.tagName;
 
-		$http.get(options.api.base_url + '/tag/' + tagName, {withCredentials: true}).success(function(data) {
+		PostService.findByTag(tagName).success(function(data) {
 			for (var postKey in data) {
 				data[postKey].content = $sce.trustAsHtml(data[postKey].content);
 			}
