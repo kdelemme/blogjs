@@ -11,8 +11,6 @@ BlogJS is a simple blog application built with AngularJS, Node.js and MongoDB. C
 - [x] Edit Article
 - [x] Delete Article
 - [x] Add tags to Article
-- [x] Create permalink manually for article
-- [ ] Create permalink automatically from the title
 - [x] Add Authentication to the administration
 - [ ] Add snapshot for Google Crawling bot
 
@@ -22,7 +20,7 @@ Get the sources with `git clone https://github.com/kdelemme/blogjs.git`
 
 ## Run
 
-Go to the api folder and install the dependencies: `npm install bcrypt express mongoose zombie passport passport-local`
+Go to the api folder and install the dependencies: `npm install bcrypt express mongoose express-jwt jsonwebtoken`
 
 Edit api/blog.js and replace the value of Access-Control-Allow-Origin to match your server
 
@@ -34,7 +32,7 @@ Then, run the Node.js application: `node blog.js`
 
 You can now open your browser: `http://localhost/blogjs/app`
 
-To access the Administration, go to `http://localhost/blogjs/app/#/admin`
+To access the Administration, go to `http://localhost/blogjs/app/#/admin/login`
 
 ## Stack
 
