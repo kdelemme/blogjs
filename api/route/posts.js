@@ -1,54 +1,45 @@
 var db = require('../config/database.js');
 
-exports.list = function(req, res) {
-	query = {};
-	if (!req.isAuthenticated()) {
-		query = {is_published: true};
-	}
+var publicFields = '_id title url tags content created';
 
-	db.postModel.find(query, null, {sort : {created: -1}}, function(err, results) {
-  		if (err) {
+exports.list = function(req, res) {
+
+	var query = db.postModel.find({is_published: true});
+
+	query.select(publicFields);
+	query.sort('-created');
+
+	query.exec(function(err, results) {
+		if (err) {
   			console.log(err);
   			return res.send(400);
   		}
 
-  		//Do not display the whole post
   		for (var postKey in results) {
-    		results[postKey].content = results[postKey].content.substr(0, 400) + '...';
-    		if (!req.isAuthenticated()) {
-    			results[postKey].read = undefined;
-    			results[postKey].updated = undefined;
-    			results[postKey].is_published = undefined;
-    			results[postKey].__v = undefined;
-    			results[postKey]._id = undefined;
-    		}
-		}
+    		results[postKey].content = results[postKey].content.substr(0, 400);
+    	}
 
   		return res.json(200, results);
-  	});
+	});
 };
 
 exports.read = function(req, res) {
-	var url = req.params.url;
-	if (url === undefined) {
+	var id = req.params.id;
+	if (id === undefined || id == '') {
 		return res.send(400);
 	}
 
-	db.postModel.findOne({url: url}, function(err, result) {
+	var query = db.postModel.findOne({_id: id});
+
+	query.select(publicFields);
+
+	query.exec(function(err, result) {
 		if (err) {
-			console.log(err);
-			return res.send(400);
-		}
+  			console.log(err);
+  			return res.send(400);
+  		}
 
-		if (!req.isAuthenticated()) {
-			result.read = undefined;
-			result.updated = undefined;
-			result.is_published = undefined;
-			result.__v = undefined;
-			result._id = undefined;
-		}
-
-		result.update({ $inc: { read: 1 } }, function(err, nbRows, raw) {
+  		result.update({ $inc: { read: 1 } }, function(err, nbRows, raw) {
 			return res.json(200, result);
 		});
 	});
@@ -57,21 +48,17 @@ exports.read = function(req, res) {
 exports.create = function(req, res) {
 	var post = req.body.post;
 	if (post === undefined || post.title === undefined || post.content === undefined 
-		|| post.url === undefined || post.tags === undefined) {
-		res.send(400);
+		|| post.tags === undefined) {
+		return res.send(400);
 	}
 
 	post.tags = post.tags.split(',');
-	post.url = post.url.replace(/\s/g , '-');
 
 	var postEntry = new db.postModel();
 	postEntry.title = post.title;
-	postEntry.url = post.url;
 	postEntry.tags = post.tags;
 	postEntry.is_published = post.is_published;
 	postEntry.content = post.content;
-
-	console.log(postEntry);
 
 	postEntry.save(function(err) {
 		if (err) {
@@ -95,10 +82,6 @@ exports.update = function(req, res) {
 	if (post.title !== undefined && post.title != "") {
 		updatePost.title = post.title;
 	} 
-
-	if (post.url !== undefined && post.url != "") {
-		updatePost.url = post.url;
-	}
 
 	if (post.tags !== undefined) {
 		if (Object.prototype.toString.call( post.tags ) === '[object Array]') {
@@ -130,7 +113,9 @@ exports.delete = function(req, res) {
 		res.send(400);
 	} 
 
-	db.postModel.findOne({_id: id}, function(err, result) {
+	var query = db.postModel.findOne({_id:id});
+
+	query.exec(function(err, result) {
 		if (err) {
 			console.log(err);
 			return res.send(400);
@@ -143,34 +128,45 @@ exports.delete = function(req, res) {
 
 exports.listByTag = function(req, res) {
 	var tagName = req.params.tagName;
-	if (tagName === undefined) {
-		res.send(400);
+	if (tagName === undefined || tagName == '') {
+		return res.send(400);
 	}
 
-	query = { tags: tagName };
+	var query = db.postModel.find({tags: tagName, is_published: true});
 
-	if (!req.isAuthenticated()) {
-		query.is_published = true;
-	}
+	query.select(publicFields);
+	query.sort('-created');
 
-
-	db.postModel.find(query, null, {sort : {created: -1}}, function(err, results) {
-  		if (err) {
+	query.exec(function(err, results) {
+		if (err) {
   			console.log(err);
   			return res.send(400);
   		}
 
-  		//Do not display the whole post
   		for (var postKey in results) {
-    		results[postKey].content = results[postKey].content.substr(0, 400) + '...';
-			results[postKey].read = undefined;
-			results[postKey].updated = undefined;
-			results[postKey].is_published = undefined;
-			results[postKey].__v = undefined;
-			results[postKey]._id = undefined;
-		}
+    		results[postKey].content = results[postKey].content.substr(0, 400);
+    	}
 
   		return res.json(200, results);
-  	});
-
+	});
 }
+
+exports.listAll = function(req, res) {
+
+	var query = db.postModel.find();
+
+	query.sort('-created');
+
+	query.exec(function(err, results) {
+		if (err) {
+  			console.log(err);
+  			return res.send(400);
+  		}
+
+  		for (var postKey in results) {
+    		results[postKey].content = results[postKey].content.substr(0, 400);
+    	}
+
+  		return res.json(200, results);
+	});
+};

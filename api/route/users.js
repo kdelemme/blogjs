@@ -1,22 +1,37 @@
-var passport = require('passport');
-var db = require('../config/database.js');
+var db = require('../config/database');
+var jwt = require('express-jwt');
+var jwt = require('jsonwebtoken');
+var secret = require('../config/secret');
 
-exports.login = function(req, res, next) {
-	passport.authenticate('local', function(err, user, info) {
-		if (err) { return res.send(400); }
-		if (!user) {
-	  		return res.send(400);
+exports.login = function(req, res) {
+	var username = req.body.username || '';
+	var password = req.body.password || '';
+	
+	if (username == '' || password == '') { 
+		return res.send(401); 
+	}
+
+	db.userModel.findOne({username: username}, function (err, user) {
+		if (err) {
+			console.log(err);
+			return res.send(401);
 		}
-		req.logIn(user, function(err) {
-		  	if (err) { return res.send(400); }
-		  	return res.send(200);
+
+		user.comparePassword(password, function(isMatch) {
+			if (!isMatch) {
+				console.log("Attempt failed to login with " + user.username);
+				return res.send(401);
+			}
+
+			var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 60 });
+			
+			return res.json({token:token});
 		});
-	})(req, res, next);
+
+	});
 };
 
 exports.logout = function(req, res) {
-	req.session.destroy();
-	req.logout();
 	res.send(200);
 }
 

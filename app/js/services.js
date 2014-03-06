@@ -6,36 +6,54 @@ appServices.factory('AuthenticationService', function() {
 	return auth;
 });
 
-appServices.factory('PostService', function($http, $sce) {
+appServices.factory('authInterceptor', function ($q, $window) {
+  return {
+    request: function (config) {
+		config.headers = config.headers || {};
+		if ($window.sessionStorage.token) {
+			config.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
+		}
+		return config;
+    },
 
+    response: function (response) {
+	    return response || $q.when(response);
+    }
+  };
+});
+
+appServices.factory('PostService', function($http, $sce, $window) {
 	return {
-		findAll: function() {
-			return $http.get(options.api.base_url + '/post', {withCredentials: true});
+		findAllPublished: function() {
+			return $http.get(options.api.base_url + '/post');
 		},
 
 		findByTag: function(tag) {
-			return $http.get(options.api.base_url + '/tag/' + tag, {withCredentials: true});
-		}
+			return $http.get(options.api.base_url + '/tag/' + tag);
+		},
 
-		read: function(url) {
-			return $http.get(options.api.base_url + '/post/' + url, {withCredentials: true});
+		read: function(id) {
+			return $http.get(options.api.base_url + '/post/' + id);
+		},
+		
+		findAll: function() {
+			return $http.get(options.api.base_url + '/admin/post');
 		},
 
 		changePublishState: function(id, newPublishState) {
-			return $http.put(options.api.base_url + '/post', {'post': {_id: id, is_published: newPublishState}}, {withCredentials: true});
+			return $http.put(options.api.base_url + '/admin/post', {'post': {_id: id, is_published: newPublishState}});
 		},
 
 		delete: function(id) {
-			return $http.delete(options.api.base_url + '/post/' + post._id, {withCredentials: true});
+			return $http.delete(options.api.base_url + '/admin/post/' + id);
 		},
 
 		create: function(post) {
-			return $http.post(options.api.base_url + '/post', {'post': post}, {withCredentials: true});
+			return $http.post(options.api.base_url + '/admin/post', {'post': post});
 		},
 
 		update: function(post) {
-			return $http.put(options.api.base_url + '/post', {'post': post}, {withCredentials: true});
+			return $http.put(options.api.base_url + '/admin/post', {'post': post});
 		}
-
 	};
 });

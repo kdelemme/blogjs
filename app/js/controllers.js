@@ -3,7 +3,7 @@ appControllers.controller('PostListCtrl', ['$scope', '$http', '$location', '$sce
 
 		$scope.posts = [];
 
-		PostService.findAll().success(function(data) {
+		PostService.findAllPublished().success(function(data) {
 			for (var postKey in data) {
 				data[postKey].content = $sce.trustAsHtml(data[postKey].content);
 			}
@@ -20,9 +20,9 @@ appControllers.controller('PostViewCtrl', ['$scope', '$routeParams', '$http', '$
 	function PostViewCtrl($scope, $routeParams, $http, $location, $sce, PostService) {
 
 		$scope.post = {};
-		var post_url = $routeParams.postUrl;
+		var id = $routeParams.id;
 
-		PostService.read(post_url).success(function(data) {
+		PostService.read(id).success(function(data) {
 			data.content = $sce.trustAsHtml(data.content);
 			$scope.post = data;
 		}).error(function(data, status) {
@@ -35,10 +35,8 @@ appControllers.controller('PostViewCtrl', ['$scope', '$routeParams', '$http', '$
 
 appControllers.controller('AdminPostListCtrl', ['$scope', '$http', '$location', '$timeout', 'PostService', 
 	function AdminPostListCtrl($scope, $http, $location, $timeout, PostService) {
-
 		$scope.posts = [];
 
-		//Get id, title, date_created, is_published, number of Read
 		PostService.findAll().success(function(data) {
 			$scope.posts = data;
 		});
@@ -62,13 +60,13 @@ appControllers.controller('AdminPostListCtrl', ['$scope', '$http', '$location', 
 		}
 
 
-		$scope.deletePost = function deletePost(post) {
-			if (post != undefined) {
+		$scope.deletePost = function deletePost(id) {
+			if (id != undefined) {
 
-				PostService.delete(post._id).success(function(data) {
+				PostService.delete(id).success(function(data) {
 					var posts = $scope.posts;
 					for (var postKey in posts) {
-			    		if (posts[postKey]._id == post._id) {
+			    		if (posts[postKey]._id == id) {
 			    			$scope.posts.splice(postKey, 1);
 			    			return ;
 			    		}
@@ -84,14 +82,11 @@ appControllers.controller('AdminPostListCtrl', ['$scope', '$http', '$location', 
 
 appControllers.controller('AdminPostCreateCtrl', ['$scope', '$http', '$location', 'PostService',
 	function AdminPostCreateCtrl($scope, $http, $location, PostService) {
-
-		$scope.message = {is_error: false, is_success: false, message: ""};
 		$('#textareaContent').wysihtml5({"font-styles": false});
 
 		$scope.save = function save(post, shouldPublish) {
 			if (post !== undefined 
-				&& post.title !== undefined 
-				&& post.url !== undefined
+				&& post.title !== undefined
 				&& post.tags != undefined) {
 
 				var content = $('#textareaContent').val();
@@ -118,13 +113,10 @@ appControllers.controller('AdminPostCreateCtrl', ['$scope', '$http', '$location'
 
 appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$http', '$location', '$sce', 'PostService',
 	function AdminPostEditCtrl($scope, $routeParams, $http, $location, $sce, PostService) {
-
-		$scope.message = {is_error: false, is_success: false, message: ""};
-
 		$scope.post = {};
-		var postUrl = $routeParams.postUrl;
+		var id = $routeParams.id;
 
-		PostService.read(postUrl).success(function(data) {
+		PostService.read(id).success(function(data) {
 			$scope.post = data;
 			$('#textareaContent').wysihtml5({"font-styles": false});
 			$('#textareaContent').val($sce.trustAsHtml(data.content));
@@ -133,7 +125,6 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$http
 		});
 
 		$scope.save = function save(post, shouldPublish) {
-			console.log(post);
 			if (post !== undefined 
 				&& post.title !== undefined && post.title != "" 
 				&& post.url !== undefined && post.url != "") {
@@ -165,8 +156,8 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$http
 	}
 ]);
 
-appControllers.controller('AdminUserCtrl', ['$scope', '$http', '$location', 'AuthenticationService', 
-	function AdminUserCtrl($scope, $http, $location, AuthenticationService) {
+appControllers.controller('AdminUserCtrl', ['$scope', '$http', '$location', '$window', 'AuthenticationService', 
+	function AdminUserCtrl($scope, $http, $location, $window, AuthenticationService) {
 
 		//Admin User Controller (login, logout)
 		$scope.logIn = function logIn(username, password) {
@@ -174,6 +165,7 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$http', '$location', 'Aut
 
 				$http.post(options.api.base_url + '/login', {username: username, password: password}, {withCredentials: true}).success(function(data) {
 					AuthenticationService.isLogged = true;
+					$window.sessionStorage.token = data.token;
 					$location.path("/admin");
 				}).error(function(status, data) {
 					console.log(status);
@@ -185,6 +177,7 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$http', '$location', 'Aut
 		$scope.logout = function logout() {
 			if (AuthenticationService.isLogged) {
 				AuthenticationService.isLogged = false;
+				delete $window.sessionStorage.token;
 				$location.path("/");
 			}
 		}

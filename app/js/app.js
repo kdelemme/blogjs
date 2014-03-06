@@ -2,8 +2,8 @@
 
 var app = angular.module('app', ['ngRoute', 'appControllers', 'appServices', 'appDirectives', 'appFilters']);
 
-var appControllers = angular.module('appControllers', []);
 var appServices = angular.module('appServices', []);
+var appControllers = angular.module('appControllers', []);
 var appDirectives = angular.module('appDirectives', []);
 var appFilters = angular.module('appFilters', []);
 
@@ -14,15 +14,13 @@ options.api.base_url = "http://localhost:3001";
 
 app.config(['$locationProvider', '$routeProvider', 
   function($location, $routeProvider) {
-    //$location.html5Mode(false).hashPrefix('!');
-
     $routeProvider.
         when('/', {
             templateUrl: 'partials/post.list.html',
             controller: 'PostListCtrl',
             access: { requiredLogin: false }
         }).
-        when('/post/:postUrl', {
+        when('/post/:id', {
             templateUrl: 'partials/post.view.html',
             controller: 'PostViewCtrl',
             access: { requiredLogin: false }
@@ -42,7 +40,7 @@ app.config(['$locationProvider', '$routeProvider',
             controller: 'AdminPostCreateCtrl',
             access: { requiredLogin: true }
         }).
-        when('/admin/post/edit/:postUrl', {
+        when('/admin/post/edit/:id', {
             templateUrl: 'partials/admin.post.edit.html',
             controller: 'AdminPostEditCtrl',
             access: { requiredLogin: true }
@@ -63,3 +61,8 @@ app.config(['$locationProvider', '$routeProvider',
 
 
   }]);
+
+
+app.config(function ($httpProvider) {
+    $httpProvider.interceptors.push('authInterceptor');
+});

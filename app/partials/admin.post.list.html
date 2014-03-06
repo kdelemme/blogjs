@@ -13,7 +13,6 @@
         <thead>
             <tr>
                 <th>Title</th>
-                <th>PermaLink</th>
                 <th>Read Numbers</th>
                 <th>Created</th>
                 <th>Last Update</th>
@@ -23,7 +22,6 @@
         <tbody> 
             <tr ng-repeat="post in posts">
                 <td>{{post.title}}</td>
-                <td>{{post.url}}</td>
                 <td>{{post.read}}</td>
                 <td>{{post.created | date:'medium'}}</td>
                 <td>{{post.updated | date:'medium'}}</td>
@@ -31,8 +29,8 @@
                     <button ng-show="post.is_published" class="btn btn-warning btn-xs" ng-click="updatePublishState(post, false)"><span class="glyphicon glyphicon-eye-close"></span></button>
                     <button ng-show="!post.is_published" class="btn btn-success btn-xs" ng-click="updatePublishState(post, true)"><span class="glyphicon glyphicon-eye-open"></span></button>
                     
-                    <a href="#/admin/post/edit/{{post.url}}" class="btn btn-warning btn-xs"><span class="glyphicon glyphicon-edit"></span></a>
-                    <button class="btn btn-danger btn-xs" ng-click="deletePost(post)"><span class="glyphicon glyphicon-trash"></span></button>
+                    <a href="#/admin/post/edit/{{post._id}}" class="btn btn-warning btn-xs"><span class="glyphicon glyphicon-edit"></span></a>
+                    <button class="btn btn-danger btn-xs" ng-click="deletePost(post._id)"><span class="glyphicon glyphicon-trash"></span></button>
                 </td>
             </tr>
         </tbody>

@@ -5,10 +5,6 @@
         <li class="active">Edit Article</li>
     </ol>
 
-    <div class="alert alert-danger" ng-show="message.is_error">{{message.message}}</div>
-    <div class="alert alert-success" ng-show="message.is_success">{{message.message}}</div>
-
-
     <form name="EditPostForm">
         <div class="form-group">
             <label for="inputTitle">Title</label>
@@ -17,10 +13,6 @@
         <div class="form-group">
             <label for="textareaContent">Content</label>
             <textarea class="form-control" rows="19" id="textareaContent" ng-model="post.content"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="inputUrl">Permanent Link (no space, only -)</label>
-            <input type="text" class="form-control" id="inputTitle" placeholder="Permanent Link" value="{{post.url}}" ng-model="post.url">
         </div>
         <div class="form-group">
             <label for="inputTags">Tags</label>

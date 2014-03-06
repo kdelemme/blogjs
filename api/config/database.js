@@ -24,7 +24,6 @@ var User = new Schema({
 
 var Post = new Schema({
     title: { type: String, required: true },
-    url: { type: String, required: true },
     tags: [{type: String}],
     is_published: { type: Boolean, default: false },
     content: { type: String, required: true },
@@ -52,10 +51,10 @@ User.pre('save', function(next) {
 });
 
 //Password verification
-User.methods.comparePassword = function(candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
+User.methods.comparePassword = function(password, cb) {
+    bcrypt.compare(password, this.password, function(err, isMatch) {
         if (err) return cb(err);
-        cb(null, isMatch);
+        cb(isMatch);
     });
 };
 
