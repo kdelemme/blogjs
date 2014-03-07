@@ -52,11 +52,9 @@ exports.create = function(req, res) {
 		return res.send(400);
 	}
 
-	post.tags = post.tags.split(',');
-
 	var postEntry = new db.postModel();
 	postEntry.title = post.title;
-	postEntry.tags = post.tags;
+	postEntry.tags = post.tags.split(',');
 	postEntry.is_published = post.is_published;
 	postEntry.content = post.content;
 
@@ -84,7 +82,7 @@ exports.update = function(req, res) {
 	} 
 
 	if (post.tags !== undefined) {
-		if (Object.prototype.toString.call( post.tags ) === '[object Array]') {
+		if (Object.prototype.toString.call(post.tags) === '[object Array]') {
 			updatePost.tags = post.tags;
 		}
 		else {
@@ -109,7 +107,7 @@ exports.update = function(req, res) {
 
 exports.delete = function(req, res) {
 	var id = req.params.id;
-	if (id === undefined) {
+	if (id === undefined || id == '') {
 		res.send(400);
 	} 
 

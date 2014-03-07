@@ -4,7 +4,7 @@ appDirectives.directive('checkAuthentication', ['$rootScope', '$location', 'Auth
         link: function (scope, elem, attrs, ctrl) {
             $root.$on('$routeChangeStart', function(event, nextRoute, currentRoute){
                 if (nextRoute.access.requiredLogin && !AuthenticationService.isLogged) {
-                    $location.path("/");
+                    $location.path("/admin/login");
                 }
             });
         }
