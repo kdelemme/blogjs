@@ -1,5 +1,4 @@
 var db = require('../config/database');
-var jwt = require('express-jwt');
 var jwt = require('jsonwebtoken');
 var secret = require('../config/secret');
 

@@ -3,12 +3,26 @@ var db = require('../config/database.js');
 var publicFields = '_id title url tags content created';
 
 exports.list = function(req, res) {
-
 	var query = db.postModel.find({is_published: true});
-
 	query.select(publicFields);
 	query.sort('-created');
+	query.exec(function(err, results) {
+		if (err) {
+  			console.log(err);
+  			return res.send(400);
+  		}
 
+  		for (var postKey in results) {
+    		results[postKey].content = results[postKey].content.substr(0, 400);
+    	}
+
+  		return res.json(200, results);
+	});
+};
+
+exports.listAll = function(req, res) {
+	var query = db.postModel.find();
+	query.sort('-created');
 	query.exec(function(err, results) {
 		if (err) {
   			console.log(err);
@@ -30,9 +44,7 @@ exports.read = function(req, res) {
 	}
 
 	var query = db.postModel.findOne({_id: id});
-
 	query.select(publicFields);
-
 	query.exec(function(err, result) {
 		if (err) {
   			console.log(err);
@@ -46,6 +58,10 @@ exports.read = function(req, res) {
 };
 
 exports.create = function(req, res) {
+	if (!req.user) {
+		return res.send(401);
+	}
+
 	var post = req.body.post;
 	if (post === undefined || post.title === undefined || post.content === undefined 
 		|| post.tags === undefined) {
@@ -69,6 +85,10 @@ exports.create = function(req, res) {
 }
 
 exports.update = function(req, res) {
+	if (!req.user) {
+		return res.send(401);
+	}
+
 	var post = req.body.post;
 
 	if (post === undefined || post._id === undefined) {
@@ -106,6 +126,10 @@ exports.update = function(req, res) {
 };
 
 exports.delete = function(req, res) {
+	if (!req.user) {
+		return res.send(401);
+	}
+
 	var id = req.params.id;
 	if (id === undefined || id == '') {
 		res.send(400);
@@ -131,10 +155,8 @@ exports.listByTag = function(req, res) {
 	}
 
 	var query = db.postModel.find({tags: tagName, is_published: true});
-
 	query.select(publicFields);
 	query.sort('-created');
-
 	query.exec(function(err, results) {
 		if (err) {
   			console.log(err);
@@ -148,23 +170,3 @@ exports.listByTag = function(req, res) {
   		return res.json(200, results);
 	});
 }
-
-exports.listAll = function(req, res) {
-
-	var query = db.postModel.find();
-
-	query.sort('-created');
-
-	query.exec(function(err, results) {
-		if (err) {
-  			console.log(err);
-  			return res.send(400);
-  		}
-
-  		for (var postKey in results) {
-    		results[postKey].content = results[postKey].content.substr(0, 400);
-    	}
-
-  		return res.json(200, results);
-	});
-};

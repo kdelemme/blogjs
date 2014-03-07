@@ -1,6 +1,6 @@
 var express = require('express')
 	, app = express()
-	, expressJwt = require('express-jwt')
+	, jwt = require('express-jwt')
 	, db = require('./config/database')
 	, secret = require('./config/secret');
 
@@ -10,7 +10,6 @@ var routes = {};
 routes.posts = require('./route/posts.js');
 routes.users = require('./route/users.js');
 
-app.use('/admin', expressJwt({secret: secret.secretToken}));
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.logger());
@@ -28,6 +27,10 @@ app.all('*', function(req, res, next) {
 	Get all published posts 
 */
 app.get('/post', routes.posts.list);
+/* 
+	Get all posts 
+*/
+app.get('/post/all', jwt({secret: secret.secretToken}), routes.posts.listAll);
 
 /* 
 	Get an existing post. Require url
@@ -50,25 +53,20 @@ app.post('/login', routes.users.login);
 app.get('/logout', routes.users.logout);
 
 
+/* 
+	Create a new post. Require data
+*/
+app.post('/post', jwt({secret: secret.secretToken}), routes.posts.create);
 
 /* 
-	ADMIN - Get all posts
+	Update an existing post. Require id
 */
-app.get('/admin/post', routes.posts.listAll);
-/* 
-	ADMIN - Create a new post. Require data
-*/
-app.post('/admin/post', routes.posts.create);
+app.put('/post', jwt({secret: secret.secretToken}), routes.posts.update);
 
 /* 
-	ADMIN - Update an existing post. Require id
+	Delete an existing post. Require id
 */
-app.put('/admin/post', routes.posts.update);
-
-/* 
-	ADMIN - Delete an existing post. Require id
-*/
-app.delete('/admin/post/:id', routes.posts.delete);
+app.delete('/post/:id', jwt({secret: secret.secretToken}), routes.posts.delete);
 
 
 

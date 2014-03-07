@@ -37,23 +37,23 @@ appServices.factory('PostService', function($http) {
 		},
 		
 		findAll: function() {
-			return $http.get(options.api.base_url + '/admin/post');
+			return $http.get(options.api.base_url + '/post/all');
 		},
 
 		changePublishState: function(id, newPublishState) {
-			return $http.put(options.api.base_url + '/admin/post', {'post': {_id: id, is_published: newPublishState}});
+			return $http.put(options.api.base_url + '/post', {'post': {_id: id, is_published: newPublishState}});
 		},
 
 		delete: function(id) {
-			return $http.delete(options.api.base_url + '/admin/post/' + id);
+			return $http.delete(options.api.base_url + '/post/' + id);
 		},
 
 		create: function(post) {
-			return $http.post(options.api.base_url + '/admin/post', {'post': post});
+			return $http.post(options.api.base_url + '/post', {'post': post});
 		},
 
 		update: function(post) {
-			return $http.put(options.api.base_url + '/admin/post', {'post': post});
+			return $http.put(options.api.base_url + '/post', {'post': post});
 		}
 	};
 });

@@ -1,4 +1,5 @@
-appDirectives.directive('checkAuthentication', ['$rootScope', '$location', 'AuthenticationService', function ($root, $location, AuthenticationService) {
+appDirectives.directive('checkAuthentication', ['$rootScope', '$location', 'AuthenticationService', 
+    function ($root, $location, AuthenticationService) {
     return {
         restrict: 'A',
         link: function (scope, elem, attrs, ctrl) {

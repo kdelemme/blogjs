@@ -126,8 +126,7 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$loca
 
 		$scope.save = function save(post, shouldPublish) {
 			if (post !== undefined 
-				&& post.title !== undefined && post.title != "" 
-				&& post.url !== undefined && post.url != "") {
+				&& post.title !== undefined && post.title != "") {
 
 				var content = $('#textareaContent').val();
 				if (content !== undefined && content != "") {
