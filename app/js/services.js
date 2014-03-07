@@ -6,7 +6,7 @@ appServices.factory('AuthenticationService', function() {
 	return auth;
 });
 
-appServices.factory('authInterceptor', function ($q, $window) {
+appServices.factory('TokenInterceptor', function ($q, $window) {
   return {
     request: function (config) {
 		config.headers = config.headers || {};
@@ -22,7 +22,7 @@ appServices.factory('authInterceptor', function ($q, $window) {
   };
 });
 
-appServices.factory('PostService', function($http, $sce, $window) {
+appServices.factory('PostService', function($http) {
 	return {
 		findAllPublished: function() {
 			return $http.get(options.api.base_url + '/post');
@@ -56,4 +56,16 @@ appServices.factory('PostService', function($http, $sce, $window) {
 			return $http.put(options.api.base_url + '/admin/post', {'post': post});
 		}
 	};
+});
+
+appServices.factory('UserService', function($http) {
+	return {
+		logIn: function(username, password) {
+			return $http.post(options.api.base_url + '/login', {username: username, password: password});
+		},
+
+		logOut: function() {
+
+		}
+	}
 });

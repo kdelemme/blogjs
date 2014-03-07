@@ -1,5 +1,5 @@
-appControllers.controller('PostListCtrl', ['$scope', '$http', '$location', '$sce', 'PostService',
-	function PostListCtrl($scope, $http, $location, $sce, PostService) {
+appControllers.controller('PostListCtrl', ['$scope', '$sce', 'PostService',
+	function PostListCtrl($scope, $sce, PostService) {
 
 		$scope.posts = [];
 
@@ -16,8 +16,8 @@ appControllers.controller('PostListCtrl', ['$scope', '$http', '$location', '$sce
 	}
 ]);
 
-appControllers.controller('PostViewCtrl', ['$scope', '$routeParams', '$http', '$location', '$sce', 'PostService',
-	function PostViewCtrl($scope, $routeParams, $http, $location, $sce, PostService) {
+appControllers.controller('PostViewCtrl', ['$scope', '$routeParams', '$location', '$sce', 'PostService',
+	function PostViewCtrl($scope, $routeParams, $location, $sce, PostService) {
 
 		$scope.post = {};
 		var id = $routeParams.id;
@@ -33,8 +33,8 @@ appControllers.controller('PostViewCtrl', ['$scope', '$routeParams', '$http', '$
 ]);
 
 
-appControllers.controller('AdminPostListCtrl', ['$scope', '$http', '$location', '$timeout', 'PostService', 
-	function AdminPostListCtrl($scope, $http, $location, $timeout, PostService) {
+appControllers.controller('AdminPostListCtrl', ['$scope', 'PostService', 
+	function AdminPostListCtrl($scope, PostService) {
 		$scope.posts = [];
 
 		PostService.findAll().success(function(data) {
@@ -80,8 +80,8 @@ appControllers.controller('AdminPostListCtrl', ['$scope', '$http', '$location', 
 	}
 ]);
 
-appControllers.controller('AdminPostCreateCtrl', ['$scope', '$http', '$location', 'PostService',
-	function AdminPostCreateCtrl($scope, $http, $location, PostService) {
+appControllers.controller('AdminPostCreateCtrl', ['$scope', '$location', 'PostService',
+	function AdminPostCreateCtrl($scope, $location, PostService) {
 		$('#textareaContent').wysihtml5({"font-styles": false});
 
 		$scope.save = function save(post, shouldPublish) {
@@ -111,8 +111,8 @@ appControllers.controller('AdminPostCreateCtrl', ['$scope', '$http', '$location'
 	}
 ]);
 
-appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$http', '$location', '$sce', 'PostService',
-	function AdminPostEditCtrl($scope, $routeParams, $http, $location, $sce, PostService) {
+appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$location', '$sce', 'PostService',
+	function AdminPostEditCtrl($scope, $routeParams, $location, $sce, PostService) {
 		$scope.post = {};
 		var id = $routeParams.id;
 
@@ -156,14 +156,14 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$http
 	}
 ]);
 
-appControllers.controller('AdminUserCtrl', ['$scope', '$http', '$location', '$window', 'AuthenticationService', 
-	function AdminUserCtrl($scope, $http, $location, $window, AuthenticationService) {
+appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'UserService', 'AuthenticationService',  
+	function AdminUserCtrl($scope, $location, $window, UserService, AuthenticationService) {
 
 		//Admin User Controller (login, logout)
 		$scope.logIn = function logIn(username, password) {
 			if (username !== undefined && password !== undefined) {
 
-				$http.post(options.api.base_url + '/login', {username: username, password: password}, {withCredentials: true}).success(function(data) {
+				UserService.logIn(username, password).success(function(data) {
 					AuthenticationService.isLogged = true;
 					$window.sessionStorage.token = data.token;
 					$location.path("/admin");
@@ -185,8 +185,8 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$http', '$location', '$wi
 ]);
 
 
-appControllers.controller('PostListTagCtrl', ['$scope', '$routeParams', '$http', '$location', '$sce', 'PostService',
-	function PostListTagCtrl($scope, $routeParams, $http, $location, $sce, PostService) {
+appControllers.controller('PostListTagCtrl', ['$scope', '$routeParams', '$sce', 'PostService',
+	function PostListTagCtrl($scope, $routeParams, $sce, PostService) {
 
 		$scope.posts = [];
 		var tagName = $routeParams.tagName;

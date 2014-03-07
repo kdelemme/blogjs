@@ -1,11 +1,10 @@
 'use strict';
 
-var app = angular.module('app', ['ngRoute', 'appControllers', 'appServices', 'appDirectives', 'appFilters']);
+var app = angular.module('app', ['ngRoute', 'appControllers', 'appServices', 'appDirectives']);
 
 var appServices = angular.module('appServices', []);
 var appControllers = angular.module('appControllers', []);
 var appDirectives = angular.module('appDirectives', []);
-var appFilters = angular.module('appFilters', []);
 
 var options = {};
 options.api = {};
@@ -64,5 +63,5 @@ app.config(['$locationProvider', '$routeProvider',
 
 
 app.config(function ($httpProvider) {
-    $httpProvider.interceptors.push('authInterceptor');
+    $httpProvider.interceptors.push('TokenInterceptor');
 });
