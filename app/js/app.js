@@ -57,9 +57,7 @@ app.config(['$locationProvider', '$routeProvider',
         otherwise({
             redirectTo: '/'
         });
-
-
-  }]);
+}]);
 
 
 app.config(function ($httpProvider) {
@@ -68,7 +66,7 @@ app.config(function ($httpProvider) {
 
 app.run(function($rootScope, $location, AuthenticationService) {
     $rootScope.$on("$routeChangeStart", function(event, nextRoute, currentRoute) {
-        if (nextRoute.access.requiredLogin && !AuthenticationService.isLogged) {
+        if (nextRoute === undefined || nextRoute.access === undefined || (nextRoute.access.requiredLogin && !AuthenticationService.isLogged)) {
             $location.path("/admin/login");
         }
     });

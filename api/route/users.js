@@ -20,7 +20,7 @@ exports.login = function(req, res) {
 			if (!isMatch) {
 				console.log("Attempt failed to login with " + user.username);
 				return res.send(401);
-			}
+            }
 
 			var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 60 });
 			
@@ -31,7 +31,13 @@ exports.login = function(req, res) {
 };
 
 exports.logout = function(req, res) {
-	res.send(200);
+	if (req.user) {
+		delete req.user;	
+		res.send(200);
+	}
+	else {
+		res.send(401);
+	}
 }
 
 
@@ -45,5 +51,5 @@ exports.logout = function(req, res) {
 	// 	if (err) {
 	// 	  console.log(err);
 	// 	}
-	// 	console.log("User Created ! Stop nodejs and remove those lines");
+	// 	console.log("User Created ! Stop nodejs and remove these lines");
 	// });
