@@ -4,6 +4,7 @@ var publicFields = '_id title url tags content created';
 
 exports.list = function(req, res) {
 	var query = db.postModel.find({is_published: true});
+
 	query.select(publicFields);
 	query.sort('-created');
 	query.exec(function(err, results) {
@@ -38,8 +39,8 @@ exports.listAll = function(req, res) {
 };
 
 exports.read = function(req, res) {
-	var id = req.params.id;
-	if (id === undefined || id == '') {
+	var id = req.params.id || '';
+	if (id == '') {
 		return res.send(400);
 	}
 
@@ -51,9 +52,13 @@ exports.read = function(req, res) {
   			return res.send(400);
   		}
 
-  		result.update({ $inc: { read: 1 } }, function(err, nbRows, raw) {
-			return res.json(200, result);
-		});
+  		if (result != null) {
+  			result.update({ $inc: { read: 1 } }, function(err, nbRows, raw) {
+				return res.json(200, result);
+			});
+  		} else {
+  			return res.send(400);
+  		}
 	});
 };
 
@@ -63,8 +68,8 @@ exports.create = function(req, res) {
 	}
 
 	var post = req.body.post;
-	if (post === undefined || post.title === undefined || post.content === undefined 
-		|| post.tags === undefined) {
+	if (post == null || post.title == null || post.content == null 
+		|| post.tags == null) {
 		return res.send(400);
 	}
 
@@ -91,17 +96,17 @@ exports.update = function(req, res) {
 
 	var post = req.body.post;
 
-	if (post === undefined || post._id === undefined) {
+	if (post == null || post._id == null) {
 		res.send(400);
 	}
 
 	var updatePost = {};
 
-	if (post.title !== undefined && post.title != "") {
+	if (post.title != null && post.title != "") {
 		updatePost.title = post.title;
 	} 
 
-	if (post.tags !== undefined) {
+	if (post.tags != null) {
 		if (Object.prototype.toString.call(post.tags) === '[object Array]') {
 			updatePost.tags = post.tags;
 		}
@@ -110,11 +115,11 @@ exports.update = function(req, res) {
 		}
 	}
 
-	if (post.is_published !== undefined) {
+	if (post.is_published != null) {
 		updatePost.is_published = post.is_published;
 	}
 
-	if (post.content !== undefined && post.content != "") {
+	if (post.content != null && post.content != "") {
 		updatePost.content = post.content;
 	}
 
@@ -131,7 +136,7 @@ exports.delete = function(req, res) {
 	}
 
 	var id = req.params.id;
-	if (id === undefined || id == '') {
+	if (id == null || id == '') {
 		res.send(400);
 	} 
 
@@ -143,14 +148,20 @@ exports.delete = function(req, res) {
 			return res.send(400);
 		}
 
-		result.remove();
-		return res.send(200);
+		if (result != null) {
+			result.remove();
+			return res.send(200);
+		}
+		else {
+			return res.send(400);
+		}
+		
 	});
 };
 
 exports.listByTag = function(req, res) {
 	var tagName = req.params.tagName;
-	if (tagName === undefined || tagName == '') {
+	if (tagName == null || tagName == '') {
 		return res.send(400);
 	}
 
