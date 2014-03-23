@@ -16,18 +16,15 @@ app.config(['$locationProvider', '$routeProvider',
     $routeProvider.
         when('/', {
             templateUrl: 'partials/post.list.html',
-            controller: 'PostListCtrl',
-            access: { requiredLogin: false }
+            controller: 'PostListCtrl'
         }).
         when('/post/:id', {
             templateUrl: 'partials/post.view.html',
-            controller: 'PostViewCtrl',
-            access: { requiredLogin: false }
+            controller: 'PostViewCtrl'
         }).
         when('/tag/:tagName', {
             templateUrl: 'partials/post.list.html',
-            controller: 'PostListTagCtrl',
-            access: { requiredLogin: false }
+            controller: 'PostListTagCtrl'
         }).
         when('/admin', {
             templateUrl: 'partials/admin.post.list.html',
@@ -46,8 +43,7 @@ app.config(['$locationProvider', '$routeProvider',
         }).
         when('/admin/login', {
             templateUrl: 'partials/admin.login.html',
-            controller: 'AdminUserCtrl',
-            access: { requiredLogin: false }
+            controller: 'AdminUserCtrl'
         }).
         when('/admin/logout', {
             templateUrl: 'partials/admin.logout.html',
@@ -66,7 +62,7 @@ app.config(function ($httpProvider) {
 
 app.run(function($rootScope, $location, AuthenticationService) {
     $rootScope.$on("$routeChangeStart", function(event, nextRoute, currentRoute) {
-        if (nextRoute === undefined || nextRoute.access === undefined || (nextRoute.access.requiredLogin && !AuthenticationService.isLogged)) {
+        if (nextRoute == null && nextRoute.access == null && nextRoute.access.requiredLogin && !AuthenticationService.isLogged) {
             $location.path("/admin/login");
         }
     });

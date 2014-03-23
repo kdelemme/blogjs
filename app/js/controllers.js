@@ -49,7 +49,7 @@ appControllers.controller('AdminPostListCtrl', ['$scope', 'PostService',
                     for (var postKey in posts) {
                         if (posts[postKey]._id == post._id) {
                             $scope.posts[postKey].is_published = shouldPublish;
-                            return ;
+                            break;
                         }
                     }
                 }).error(function(status, data) {
@@ -68,7 +68,7 @@ appControllers.controller('AdminPostListCtrl', ['$scope', 'PostService',
                     for (var postKey in posts) {
                         if (posts[postKey]._id == id) {
                             $scope.posts.splice(postKey, 1);
-                            return ;
+                            break;
                         }
                     }
                 }).error(function(status, data) {
