@@ -20,15 +20,31 @@ Get the sources with `git clone https://github.com/kdelemme/blogjs.git`
 
 ## Run
 
+### Build
+
+The build result is already available, but if you want to build it yourself, install bulp: 
+
+Under blogjs/ directory:
+
+Install gulp globally: `npm install gulp gulp-concat`
+
+Make sure you have a package.json and install gulp in your project dependencies: `npm install --save-dev gulp`
+
+Run gulp: `gulp`
+
+### Back-end
+
 Go to the api folder and install the dependencies: `npm install bcrypt express mongoose express-jwt jsonwebtoken`
 
-Edit api/blog.js and replace the value of Access-Control-Allow-Origin to match your server
+Edit api/blog.js and replace the value of Access-Control-Allow-Origin to match your server configuration.
 
 Edit api/route/users.js and replace `user.username = "YOUR_USERNAME";` and `user.password = "YOUR_PASSWORD";` with your username and password. After the first launch, delete those lines and restart the nodejs application.
 
-Edit app/js/app.js and replace the value of options.api.base_url to match your server.
+Run the application: `node blog.js`
 
-Then, run the Node.js application: `node blog.js`
+### Front-end
+
+Edit app/js/app.js and replace the value of `options.api.base_url` to match your server configuration.
 
 You can now open your browser: `http://localhost/blogjs/app`
 
