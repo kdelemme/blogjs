@@ -62,7 +62,7 @@ app.config(function ($httpProvider) {
 
 app.run(function($rootScope, $location, AuthenticationService) {
     $rootScope.$on("$routeChangeStart", function(event, nextRoute, currentRoute) {
-        if (nextRoute == null && nextRoute.access == null && nextRoute.access.requiredLogin && !AuthenticationService.isLogged) {
+        if (nextRoute != null && nextRoute.access != null && nextRoute.access.requiredLogin && !AuthenticationService.isLogged) {
             $location.path("/admin/login");
         }
     });
