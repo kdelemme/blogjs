@@ -16,6 +16,10 @@ exports.login = function(req, res) {
 			return res.send(401);
 		}
 
+		if (user == undefined) {
+			return res.send(401);
+		}
+		
 		user.comparePassword(password, function(isMatch) {
 			if (!isMatch) {
 				console.log("Attempt failed to login with " + user.username);
