@@ -22,11 +22,11 @@ Get the sources with `git clone https://github.com/kdelemme/blogjs.git`
 
 ### Build
 
-The build result is already available, but if you want to build it yourself, install bulp: 
+The build result is already available, but if you want to build it yourself, install gulp: 
 
 Under blogjs/ directory:
 
-Install gulp globally: `npm install gulp gulp-concat`
+Install gulp: `npm install gulp gulp-concat`
 
 Make sure you have a package.json and install gulp in your project dependencies: `npm install --save-dev gulp`
 
