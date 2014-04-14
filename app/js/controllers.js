@@ -160,7 +160,7 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'U
 
         //Admin User Controller (login, logout)
         $scope.logIn = function logIn(username, password) {
-            if (username !== undefined && password !== undefined) {
+            if (username != null && password != null) {
 
                 UserService.logIn(username, password).success(function(data) {
                     AuthenticationService.isLogged = true;

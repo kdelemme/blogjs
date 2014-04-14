@@ -60,9 +60,11 @@ app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('TokenInterceptor');
 });
 
-app.run(function($rootScope, $location, AuthenticationService) {
+app.run(function($rootScope, $location, $window, AuthenticationService) {
     $rootScope.$on("$routeChangeStart", function(event, nextRoute, currentRoute) {
-        if (nextRoute != null && nextRoute.access != null && nextRoute.access.requiredLogin && !AuthenticationService.isLogged) {
+        if (nextRoute != null && nextRoute.access != null && nextRoute.access.requiredLogin 
+            && !AuthenticationService.isLogged && !$window.sessionStorage.token) {
+
             $location.path("/admin/login");
         }
     });
@@ -229,7 +231,7 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'U
 
         //Admin User Controller (login, logout)
         $scope.logIn = function logIn(username, password) {
-            if (username !== undefined && password !== undefined) {
+            if (username != null && password != null) {
 
                 UserService.logIn(username, password).success(function(data) {
                     AuthenticationService.isLogged = true;
@@ -290,7 +292,7 @@ appServices.factory('AuthenticationService', function() {
     return auth;
 });
 
-appServices.factory('TokenInterceptor', function ($q, $window, AuthenticationService) {
+appServices.factory('TokenInterceptor', function ($q, $window, $location, AuthenticationService) {
     return {
         request: function (config) {
             config.headers = config.headers || {};
@@ -300,8 +302,27 @@ appServices.factory('TokenInterceptor', function ($q, $window, AuthenticationSer
             return config;
         },
 
+        requestError: function(rejection) {
+            return $q.reject(rejection);
+        },
+
         response: function (response) {
             return response || $q.when(response);
+        },
+
+        /* Revoke client authentication if 401 is received */
+        responseError: function(rejection) {
+            console.log("Rejecton !");
+            console.log(rejection);
+
+            if (rejection != null && rejection.status === 401 && ($window.sessionStorage.token || AuthenticationService.isLogged)) {
+                console.log("Revoked !");
+                delete $window.sessionStorage.token;
+                AuthenticationService.isLogged = false;
+                $location.path("/admin/login");
+            }
+
+            return $q.reject(rejection);
         }
     };
 });

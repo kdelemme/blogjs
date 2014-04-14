@@ -60,9 +60,12 @@ app.config(function ($httpProvider) {
     $httpProvider.interceptors.push('TokenInterceptor');
 });
 
-app.run(function($rootScope, $location, AuthenticationService) {
+app.run(function($rootScope, $location, $window, AuthenticationService) {
     $rootScope.$on("$routeChangeStart", function(event, nextRoute, currentRoute) {
-        if (nextRoute != null && nextRoute.access != null && nextRoute.access.requiredLogin && !AuthenticationService.isLogged) {
+        //redirect only if both isLogged is false and no token is set
+        if (nextRoute != null && nextRoute.access != null && nextRoute.access.requiredLogin 
+            && !AuthenticationService.isLogged && !$window.sessionStorage.token) {
+
             $location.path("/admin/login");
         }
     });

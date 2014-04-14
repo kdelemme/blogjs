@@ -6,7 +6,7 @@ appServices.factory('AuthenticationService', function() {
     return auth;
 });
 
-appServices.factory('TokenInterceptor', function ($q, $window, AuthenticationService) {
+appServices.factory('TokenInterceptor', function ($q, $window, $location, AuthenticationService) {
     return {
         request: function (config) {
             config.headers = config.headers || {};
@@ -16,8 +16,23 @@ appServices.factory('TokenInterceptor', function ($q, $window, AuthenticationSer
             return config;
         },
 
+        requestError: function(rejection) {
+            return $q.reject(rejection);
+        },
+
         response: function (response) {
             return response || $q.when(response);
+        },
+
+        /* Revoke client authentication if 401 is received */
+        responseError: function(rejection) {
+            if (rejection != null && rejection.status === 401 && ($window.sessionStorage.token || AuthenticationService.isLogged)) {
+                delete $window.sessionStorage.token;
+                AuthenticationService.isLogged = false;
+                $location.path("/admin/login");
+            }
+
+            return $q.reject(rejection);
         }
     };
 });

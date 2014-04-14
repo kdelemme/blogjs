@@ -48,7 +48,7 @@ exports.read = function(req, res) {
 		return res.send(400);
 	}
 
-	var query = db.postModel.findOne({_id: id, is_published: true});
+	var query = db.postModel.findOne({_id: id});
 	query.select(publicFields);
 	query.exec(function(err, result) {
 		if (err) {
