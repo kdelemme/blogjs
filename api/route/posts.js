@@ -22,6 +22,10 @@ exports.list = function(req, res) {
 };
 
 exports.listAll = function(req, res) {
+	if (!req.user) {
+		return res.send(401);
+	}
+
 	var query = db.postModel.find();
 	query.sort('-created');
 	query.exec(function(err, results) {
@@ -44,7 +48,7 @@ exports.read = function(req, res) {
 		return res.send(400);
 	}
 
-	var query = db.postModel.findOne({_id: id});
+	var query = db.postModel.findOne({_id: id, is_published: true});
 	query.select(publicFields);
 	query.exec(function(err, result) {
 		if (err) {
@@ -160,8 +164,8 @@ exports.delete = function(req, res) {
 };
 
 exports.listByTag = function(req, res) {
-	var tagName = req.params.tagName;
-	if (tagName == null || tagName == '') {
+	var tagName = req.params.tagName || '';
+	if (tagName == '') {
 		return res.send(400);
 	}
 
