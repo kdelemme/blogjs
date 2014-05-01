@@ -1,6 +1,7 @@
 appServices.factory('AuthenticationService', function() {
     var auth = {
-        isLogged: false
+        isAuthenticated: false,
+        isAdmin: false
     }
 
     return auth;
@@ -26,9 +27,9 @@ appServices.factory('TokenInterceptor', function ($q, $window, $location, Authen
 
         /* Revoke client authentication if 401 is received */
         responseError: function(rejection) {
-            if (rejection != null && rejection.status === 401 && ($window.sessionStorage.token || AuthenticationService.isLogged)) {
+            if (rejection != null && rejection.status === 401 && ($window.sessionStorage.token || AuthenticationService.isAuthenticated)) {
                 delete $window.sessionStorage.token;
-                AuthenticationService.isLogged = false;
+                AuthenticationService.isAuthenticated = false;
                 $location.path("/admin/login");
             }
 
@@ -75,12 +76,16 @@ appServices.factory('PostService', function($http) {
 
 appServices.factory('UserService', function($http) {
     return {
-        logIn: function(username, password) {
-            return $http.post(options.api.base_url + '/login', {username: username, password: password});
+        signIn: function(username, password) {
+            return $http.post(options.api.base_url + '/user/signin', {username: username, password: password});
         },
 
         logOut: function() {
-            return $http.get(options.api.base_url + '/logout');
+            return $http.get(options.api.base_url + '/user/logout');
+        },
+
+        register: function(username, password, passwordConfirmation) {
+            return $http.post(options.api.base_url + '/user/register', {username: username, password: password, passwordConfirmation: passwordConfirmation });
         }
     }
 });

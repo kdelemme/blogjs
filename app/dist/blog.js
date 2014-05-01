@@ -29,26 +29,30 @@ app.config(['$locationProvider', '$routeProvider',
         when('/admin', {
             templateUrl: 'partials/admin.post.list.html',
             controller: 'AdminPostListCtrl',
-            access: { requiredLogin: true }
+            access: { requiredAuthentication: true }
         }).
         when('/admin/post/create', {
             templateUrl: 'partials/admin.post.create.html',
             controller: 'AdminPostCreateCtrl',
-            access: { requiredLogin: true }
+            access: { requiredAuthentication: true }
         }).
         when('/admin/post/edit/:id', {
             templateUrl: 'partials/admin.post.edit.html',
             controller: 'AdminPostEditCtrl',
-            access: { requiredLogin: true }
+            access: { requiredAuthentication: true }
+        }).
+        when('/admin/register', {
+            templateUrl: 'partials/admin.register.html',
+            controller: 'AdminUserCtrl'
         }).
         when('/admin/login', {
-            templateUrl: 'partials/admin.login.html',
+            templateUrl: 'partials/admin.signin.html',
             controller: 'AdminUserCtrl'
         }).
         when('/admin/logout', {
             templateUrl: 'partials/admin.logout.html',
             controller: 'AdminUserCtrl',
-            access: { requiredLogin: true }
+            access: { requiredAuthentication: true }
         }).
         otherwise({
             redirectTo: '/'
@@ -62,8 +66,9 @@ app.config(function ($httpProvider) {
 
 app.run(function($rootScope, $location, $window, AuthenticationService) {
     $rootScope.$on("$routeChangeStart", function(event, nextRoute, currentRoute) {
-        if (nextRoute != null && nextRoute.access != null && nextRoute.access.requiredLogin 
-            && !AuthenticationService.isLogged && !$window.sessionStorage.token) {
+        //redirect only if both isAuthenticated is false and no token is set
+        if (nextRoute != null && nextRoute.access != null && nextRoute.access.requiredAuthentication 
+            && !AuthenticationService.isAuthenticated && !$window.sessionStorage.token) {
 
             $location.path("/admin/login");
         }
@@ -229,12 +234,12 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$loca
 appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'UserService', 'AuthenticationService',  
     function AdminUserCtrl($scope, $location, $window, UserService, AuthenticationService) {
 
-        //Admin User Controller (login, logout)
-        $scope.logIn = function logIn(username, password) {
+        //Admin User Controller (signIn, logOut)
+        $scope.signIn = function signIn(username, password) {
             if (username != null && password != null) {
 
-                UserService.logIn(username, password).success(function(data) {
-                    AuthenticationService.isLogged = true;
+                UserService.signIn(username, password).success(function(data) {
+                    AuthenticationService.isAuthenticated = true;
                     $window.sessionStorage.token = data.token;
                     $location.path("/admin");
                 }).error(function(status, data) {
@@ -244,11 +249,11 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'U
             }
         }
 
-        $scope.logout = function logout() {
-            if (AuthenticationService.isLogged) {
+        $scope.logOut = function logOut() {
+            if (AuthenticationService.isAuthenticated) {
                 
                 UserService.logOut().success(function(data) {
-                    AuthenticationService.isLogged = false;
+                    AuthenticationService.isAuthenticated = false;
                     delete $window.sessionStorage.token;
                     $location.path("/");
                 }).error(function(status, data) {
@@ -258,6 +263,20 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'U
             }
             else {
                 $location.path("/admin/login");
+            }
+        }
+
+        $scope.register = function register(username, password, passwordConfirm) {
+            if (AuthenticationService.isAuthenticated) {
+                $location.path("/admin");
+            }
+            else {
+                UserService.register(username, password, passwordConfirm).success(function(data) {
+                    $location.path("/admin/login");
+                }).error(function(status, data) {
+                    console.log(status);
+                    console.log(data);
+                });
             }
         }
     }
@@ -286,7 +305,8 @@ appControllers.controller('PostListTagCtrl', ['$scope', '$routeParams', '$sce', 
 
 appServices.factory('AuthenticationService', function() {
     var auth = {
-        isLogged: false
+        isAuthenticated: false,
+        isAdmin: false
     }
 
     return auth;
@@ -312,13 +332,9 @@ appServices.factory('TokenInterceptor', function ($q, $window, $location, Authen
 
         /* Revoke client authentication if 401 is received */
         responseError: function(rejection) {
-            console.log("Rejecton !");
-            console.log(rejection);
-
-            if (rejection != null && rejection.status === 401 && ($window.sessionStorage.token || AuthenticationService.isLogged)) {
-                console.log("Revoked !");
+            if (rejection != null && rejection.status === 401 && ($window.sessionStorage.token || AuthenticationService.isAuthenticated)) {
                 delete $window.sessionStorage.token;
-                AuthenticationService.isLogged = false;
+                AuthenticationService.isAuthenticated = false;
                 $location.path("/admin/login");
             }
 
@@ -365,12 +381,16 @@ appServices.factory('PostService', function($http) {
 
 appServices.factory('UserService', function($http) {
     return {
-        logIn: function(username, password) {
-            return $http.post(options.api.base_url + '/login', {username: username, password: password});
+        signIn: function(username, password) {
+            return $http.post(options.api.base_url + '/user/signin', {username: username, password: password});
         },
 
         logOut: function() {
-            return $http.get(options.api.base_url + '/logout');
+            return $http.get(options.api.base_url + '/user/logout');
+        },
+
+        register: function(username, password, passwordConfirmation) {
+            return $http.post(options.api.base_url + '/user/register', {username: username, password: password, passwordConfirmation: passwordConfirmation });
         }
     }
 });

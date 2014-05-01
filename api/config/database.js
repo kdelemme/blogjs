@@ -1,16 +1,15 @@
-var mongoose = require('mongoose'),
-    bcrypt = require('bcrypt'),
-    SALT_WORK_FACTOR = 10;
+var mongoose = require('mongoose');
+var bcrypt = require('bcrypt');
+var SALT_WORK_FACTOR = 10;
+var mongodbURL = 'mongodb://localhost/blog';
+var mongodbOptions = { };
 
-var uristring = 'mongodb://localhost/blog';
-
-var mongoOptions = { };
-
-mongoose.connect(uristring, mongoOptions, function (err, res) {
+mongoose.connect(mongodbURL, mongodbOptions, function (err, res) {
     if (err) { 
-        console.log('ERROR connecting to: ' + uristring + '. ' + err);
+        console.log('Connection refused to ' + mongodbURL);
+        console.log(err);
     } else {
-        console.log('Successfully connected to: ' + uristring);
+        console.log('Connection successful to: ' + mongodbURL);
     }
 });
 
@@ -19,16 +18,18 @@ var Schema = mongoose.Schema;
 // User schema
 var User = new Schema({
     username: { type: String, required: true, unique: true },
-    password: { type: String, required: true}
+    password: { type: String, required: true },
+    is_admin: { type: Boolean, default: false },
+    created: { type: Date, default: Date.now }
 });
 
 var Post = new Schema({
     title: { type: String, required: true },
-    tags: [{type: String}],
+    tags: [ {type: String} ],
     is_published: { type: Boolean, default: false },
     content: { type: String, required: true },
-    created: {type: Date, default: Date.now },
-    updated: { type: Date, default: Date.now},
+    created: { type: Date, default: Date.now },
+    updated: { type: Date, default: Date.now },
     read: { type: Number, default: 0 }
 });
 

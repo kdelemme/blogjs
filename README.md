@@ -26,19 +26,15 @@ The build result is already available, but if you want to build it yourself, ins
 
 Under blogjs/ directory:
 
-Install gulp: `npm install gulp gulp-concat`
+install gulp and the gulp plugins: `npm install gulp gulp-concat --save-dev`
 
-Make sure you have a package.json and install gulp in your project dependencies: `npm install --save-dev gulp`
-
-Run gulp: `gulp`
+Run gulp to build the scripts of the AngularJS app with: `gulp`
 
 ### Back-end
 
 Go to the api folder and install the dependencies: `npm install bcrypt express mongoose express-jwt jsonwebtoken`
 
 Edit api/blog.js and replace the value of Access-Control-Allow-Origin to match your server configuration.
-
-Edit api/route/users.js and replace `user.username = "YOUR_USERNAME";` and `user.password = "YOUR_PASSWORD";` with your username and password. After the first launch, delete those lines and restart the nodejs application.
 
 Run the application: `node blog.js`
 
@@ -47,6 +43,8 @@ Run the application: `node blog.js`
 Edit app/js/app.js and replace the value of `options.api.base_url` to match your server configuration.
 
 You can now open your browser: `http://localhost/blogjs/app`
+
+Create a first account on `http://localhost/blogjs/app/#/admin/register`
 
 To access the Administration, go to `http://localhost/blogjs/app/#/admin/login`
 

@@ -2,7 +2,7 @@ var db = require('../config/database');
 var jwt = require('jsonwebtoken');
 var secret = require('../config/secret');
 
-exports.login = function(req, res) {
+exports.signin = function(req, res) {
 	var username = req.body.username || '';
 	var password = req.body.password || '';
 	
@@ -26,7 +26,7 @@ exports.login = function(req, res) {
 				return res.send(401);
             }
 
-			var token = jwt.sign(user, secret.secretToken, { expiresInMinutes: 60 });
+			var token = jwt.sign(user._id, secret.secretToken, { expiresInMinutes: 60 });
 			
 			return res.json({token:token});
 		});
@@ -44,16 +44,45 @@ exports.logout = function(req, res) {
 	}
 }
 
+exports.register = function(req, res) {
+	var username = req.body.username || '';
+	var password = req.body.password || '';
+	var passwordConfirmation = req.body.passwordConfirmation || '';
 
+	if (username == '' || password == '' || password != passwordConfirmation) {
+		return res.send(400);
+	}
 
-	// Uncomment this the first time you ran it. Then delete it and restart.
-	// var user = new db.userModel();
-	// user.username = "username";
-	// user.password = "password";
+	var user = new db.userModel();
+	user.username = username;
+	user.password = password;
 
-	// user.save(function(err) {
-	// 	if (err) {
-	// 	  console.log(err);
-	// 	}
-	// 	console.log("User Created ! Stop nodejs and remove these lines");
-	// });
+	user.save(function(err) {
+		if (err) {
+			console.log(err);
+			return res.send(500);
+		}	
+		
+		db.userModel.count(function(err, counter) {
+			if (err) {
+				console.log(err);
+				return res.send(500);
+			}
+
+			if (counter == 1) {
+				db.userModel.update({username:user.username}, {is_admin:true}, function(err, nbRow) {
+					if (err) {
+						console.log(err);
+						return res.send(500);
+					}
+
+					console.log('First user created as an Admin');
+					return res.send(200);
+				});
+			} 
+			else {
+				return res.send(200);
+			}
+		});
+	});
+}

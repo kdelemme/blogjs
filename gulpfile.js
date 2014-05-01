@@ -9,15 +9,8 @@ gulp.task('scripts', function() {
     // concat and copy all JavaScript
     return gulp.src(paths.scripts)
         .pipe(concat('blog.js'))
-        .pipe(gulp.dest('app/js'));
-});
-
-// Rerun the task when a file changes
-gulp.task('watch', function() {
-    gulp.watch(paths.scripts, ['scripts']);
+        .pipe(gulp.dest('app/dist'));
 });
 
 // The default task (called when you run `gulp` from cli)
 gulp.task('default', ['scripts']); 
-
-gulp.task('ci', ['scripts', 'watch']);

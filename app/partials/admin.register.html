@@ -1,0 +1,32 @@
+<section class="post">
+	<ol class="breadcrumb">
+        <li><a href="#/">Blog</a></li>
+        <li class="active">Register</li>
+    </ol>
+
+	<form class="form-horizontal" role="form">
+		<div class="form-group">
+			<label for="inputUsername" class="col-sm-4 control-label">Username</label>
+			<div class="col-sm-4">
+				<input type="text" class="form-control" id="inputUsername" placeholder="Username" ng-model="register.username">
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="inputPassword" class="col-sm-4 control-label">Password</label>
+			<div class="col-sm-4">
+				<input type="password" class="form-control" id="inputPassword" placeholder="Password" ng-model="register.password">
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="inputPasswordConfirmation" class="col-sm-4 control-label">Password Confirmation</label>
+			<div class="col-sm-4">
+				<input type="password" class="form-control" id="inputPasswordConfirmation" placeholder="Password" ng-model="register.passwordConfirmation">
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-4 col-sm-10">
+				<button type="submit" class="btn btn-default" ng-click="register(register.username, register.password, register.passwordConfirmation)">Register</button>
+			</div>
+		</div>
+	</form>
+</section>

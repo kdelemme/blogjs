@@ -1,15 +1,16 @@
-var express = require('express')
-    , app = express()
-    , jwt = require('express-jwt')
-    , db = require('./config/database')
-    , secret = require('./config/secret');
+var express = require('express');
+var app = express();
+var jwt = require('express-jwt');
+var db = require('./config/database');
+var secret = require('./config/secret');
 
 
-//Route
+//Routes
 var routes = {};
 routes.posts = require('./route/posts.js');
 routes.users = require('./route/users.js');
 
+app.listen(3001);
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(express.logger());
@@ -23,52 +24,34 @@ app.all('*', function(req, res, next) {
   next();
 });
 
-/* 
-    Get all published posts 
-*/
+//Get all published post
 app.get('/post', routes.posts.list);
-/* 
-    Get all posts 
-*/
+
+//Get all posts
 app.get('/post/all', jwt({secret: secret.secretToken}), routes.posts.listAll);
 
-/* 
-    Get an existing post. Require url
-*/
-app.get('/post/:id', routes.posts.read);
+//Get the post id
+app.get('/post/:id', routes.posts.read); 
 
-/*
-    Get posts by tag
-*/
-app.get('/tag/:tagName', routes.posts.listByTag);
+//Get posts by tag
+app.get('/tag/:tagName', routes.posts.listByTag); 
 
-/*
-    Login
-*/
-app.post('/login', routes.users.login);
+//Create a new user
+app.post('/user/register', routes.users.register); 
 
-/*
-    Logout
-*/
-app.get('/logout', jwt({secret: secret.secretToken}), routes.users.logout);
+//Login
+app.post('/user/signin', routes.users.signin); 
 
+//Logout
+app.get('/user/logout', jwt({secret: secret.secretToken}), routes.users.logout); 
 
-/* 
-    Create a new post. Require data
-*/
-app.post('/post', jwt({secret: secret.secretToken}), routes.posts.create);
+//Create a new post
+app.post('/post', jwt({secret: secret.secretToken}), routes.posts.create); 
 
-/* 
-    Update an existing post. Require id
-*/
-app.put('/post', jwt({secret: secret.secretToken}), routes.posts.update);
+//Edit the post id
+app.put('/post', jwt({secret: secret.secretToken}), routes.posts.update); 
 
-/* 
-    Delete an existing post. Require id
-*/
-app.delete('/post/:id', jwt({secret: secret.secretToken}), routes.posts.delete);
-
-
+//Delete the post id
+app.delete('/post/:id', jwt({secret: secret.secretToken}), routes.posts.delete); 
 
 console.log('Blog API is starting on port 3001');
-app.listen(3001);

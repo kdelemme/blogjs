@@ -158,12 +158,12 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$loca
 appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'UserService', 'AuthenticationService',  
     function AdminUserCtrl($scope, $location, $window, UserService, AuthenticationService) {
 
-        //Admin User Controller (login, logout)
-        $scope.logIn = function logIn(username, password) {
+        //Admin User Controller (signIn, logOut)
+        $scope.signIn = function signIn(username, password) {
             if (username != null && password != null) {
 
-                UserService.logIn(username, password).success(function(data) {
-                    AuthenticationService.isLogged = true;
+                UserService.signIn(username, password).success(function(data) {
+                    AuthenticationService.isAuthenticated = true;
                     $window.sessionStorage.token = data.token;
                     $location.path("/admin");
                 }).error(function(status, data) {
@@ -173,11 +173,11 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'U
             }
         }
 
-        $scope.logout = function logout() {
-            if (AuthenticationService.isLogged) {
+        $scope.logOut = function logOut() {
+            if (AuthenticationService.isAuthenticated) {
                 
                 UserService.logOut().success(function(data) {
-                    AuthenticationService.isLogged = false;
+                    AuthenticationService.isAuthenticated = false;
                     delete $window.sessionStorage.token;
                     $location.path("/");
                 }).error(function(status, data) {
@@ -187,6 +187,20 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'U
             }
             else {
                 $location.path("/admin/login");
+            }
+        }
+
+        $scope.register = function register(username, password, passwordConfirm) {
+            if (AuthenticationService.isAuthenticated) {
+                $location.path("/admin");
+            }
+            else {
+                UserService.register(username, password, passwordConfirm).success(function(data) {
+                    $location.path("/admin/login");
+                }).error(function(status, data) {
+                    console.log(status);
+                    console.log(data);
+                });
             }
         }
     }

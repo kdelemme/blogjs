@@ -29,26 +29,30 @@ app.config(['$locationProvider', '$routeProvider',
         when('/admin', {
             templateUrl: 'partials/admin.post.list.html',
             controller: 'AdminPostListCtrl',
-            access: { requiredLogin: true }
+            access: { requiredAuthentication: true }
         }).
         when('/admin/post/create', {
             templateUrl: 'partials/admin.post.create.html',
             controller: 'AdminPostCreateCtrl',
-            access: { requiredLogin: true }
+            access: { requiredAuthentication: true }
         }).
         when('/admin/post/edit/:id', {
             templateUrl: 'partials/admin.post.edit.html',
             controller: 'AdminPostEditCtrl',
-            access: { requiredLogin: true }
+            access: { requiredAuthentication: true }
+        }).
+        when('/admin/register', {
+            templateUrl: 'partials/admin.register.html',
+            controller: 'AdminUserCtrl'
         }).
         when('/admin/login', {
-            templateUrl: 'partials/admin.login.html',
+            templateUrl: 'partials/admin.signin.html',
             controller: 'AdminUserCtrl'
         }).
         when('/admin/logout', {
             templateUrl: 'partials/admin.logout.html',
             controller: 'AdminUserCtrl',
-            access: { requiredLogin: true }
+            access: { requiredAuthentication: true }
         }).
         otherwise({
             redirectTo: '/'
@@ -62,9 +66,9 @@ app.config(function ($httpProvider) {
 
 app.run(function($rootScope, $location, $window, AuthenticationService) {
     $rootScope.$on("$routeChangeStart", function(event, nextRoute, currentRoute) {
-        //redirect only if both isLogged is false and no token is set
-        if (nextRoute != null && nextRoute.access != null && nextRoute.access.requiredLogin 
-            && !AuthenticationService.isLogged && !$window.sessionStorage.token) {
+        //redirect only if both isAuthenticated is false and no token is set
+        if (nextRoute != null && nextRoute.access != null && nextRoute.access.requiredAuthentication 
+            && !AuthenticationService.isAuthenticated && !$window.sessionStorage.token) {
 
             $location.path("/admin/login");
         }
