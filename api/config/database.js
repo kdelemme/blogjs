@@ -30,7 +30,8 @@ var Post = new Schema({
     content: { type: String, required: true },
     created: { type: Date, default: Date.now },
     updated: { type: Date, default: Date.now },
-    read: { type: Number, default: 0 }
+    read: { type: Number, default: 0 },
+    likes: { type: Number, default: 0 }
 });
 
 

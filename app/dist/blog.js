@@ -92,11 +92,13 @@ appControllers.controller('PostListCtrl', ['$scope', '$sce', 'PostService',
     }
 ]);
 
-appControllers.controller('PostViewCtrl', ['$scope', '$routeParams', '$location', '$sce', 'PostService',
-    function PostViewCtrl($scope, $routeParams, $location, $sce, PostService) {
+appControllers.controller('PostViewCtrl', ['$scope', '$routeParams', '$location', '$sce', 'PostService', 'LikeService',
+    function PostViewCtrl($scope, $routeParams, $location, $sce, PostService, LikeService) {
 
         $scope.post = {};
         var id = $routeParams.id;
+
+        $scope.isAlreadyLiked = LikeService.isAlreadyLiked(id);
 
         PostService.read(id).success(function(data) {
             data.content = $sce.trustAsHtml(data.content);
@@ -105,6 +107,35 @@ appControllers.controller('PostViewCtrl', ['$scope', '$routeParams', '$location'
             console.log(status);
             console.log(data);
         });
+
+        //Like a post
+        $scope.likePost = function likePost() {
+            if (!LikeService.isAlreadyLiked(id)) {
+                PostService.like(id).success(function(data) {
+                    $scope.post.likes++;
+                    LikeService.like(id);
+                    $scope.isAlreadyLiked = true;
+                }).error(function(data, status) {
+                    console.log(status);
+                    console.log(data);
+                });
+            }
+        };
+
+        //Unlike a post
+        $scope.unlikePost = function unlikePost() {
+            if (LikeService.isAlreadyLiked(id)) {
+                PostService.unlike(id).success(function(data) {
+                    $scope.post.likes--;
+                    LikeService.unlike(id);
+                    $scope.isAlreadyLiked = false;
+                }).error(function(data, status) {
+                    console.log(status);
+                    console.log(data);
+                });
+            }
+        }
+
     }
 ]);
 
@@ -118,7 +149,7 @@ appControllers.controller('AdminPostListCtrl', ['$scope', 'PostService',
         });
 
         $scope.updatePublishState = function updatePublishState(post, shouldPublish) {
-            if (post !== undefined && shouldPublish !== undefined) {
+            if (post != undefined && shouldPublish != undefined) {
 
                 PostService.changePublishState(post._id, shouldPublish).success(function(data) {
                     var posts = $scope.posts;
@@ -161,15 +192,15 @@ appControllers.controller('AdminPostCreateCtrl', ['$scope', '$location', 'PostSe
         $('#textareaContent').wysihtml5({"font-styles": false});
 
         $scope.save = function save(post, shouldPublish) {
-            if (post !== undefined 
-                && post.title !== undefined
+            if (post != undefined 
+                && post.title != undefined
                 && post.tags != undefined) {
 
                 var content = $('#textareaContent').val();
-                if (content !== undefined) {
+                if (content != undefined) {
                     post.content = content;
 
-                    if (shouldPublish !== undefined && shouldPublish == true) {
+                    if (shouldPublish != undefined && shouldPublish == true) {
                         post.is_published = true;
                     } else {
                         post.is_published = false;
@@ -393,11 +424,19 @@ appServices.factory('PostService', function($http) {
 
         update: function(post) {
             return $http.put(options.api.base_url + '/post', {'post': post});
+        },
+
+        like: function(id) {
+            return $http.post(options.api.base_url  + '/post/like', {'id': id});
+        },
+
+        unlike: function(id) {
+            return $http.post(options.api.base_url  + '/post/unlike', {'id': id}); 
         }
     };
 });
 
-appServices.factory('UserService', function($http) {
+appServices.factory('UserService', function ($http) {
     return {
         signIn: function(username, password) {
             return $http.post(options.api.base_url + '/user/signin', {username: username, password: password});
@@ -409,6 +448,52 @@ appServices.factory('UserService', function($http) {
 
         register: function(username, password, passwordConfirmation) {
             return $http.post(options.api.base_url + '/user/register', {username: username, password: password, passwordConfirmation: passwordConfirmation });
+        }
+    }
+});
+
+appServices.factory('LikeService', function ($window) {
+    //Contains post ids already liked by the user
+    var postLiked = [];
+
+    if ($window.sessionStorage && $window.sessionStorage.postLiked) {
+        postLiked.push($window.sessionStorage.postLiked);
+    }
+
+
+    return {
+        isAlreadyLiked: function(id) {
+            if (id != null) {
+                for (var i in postLiked) {
+                    if (postLiked[i] == id) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            return false;
+        },
+
+        like: function(id) {
+            if (!this.isAlreadyLiked(id)) {
+                postLiked.push(id);
+                $window.sessionStorage.postLiked = postLiked;
+            }
+        },
+
+        unlike: function(id) {
+            if (this.isAlreadyLiked(id)) {
+                for (var i in postLiked) {
+                    if (postLiked[i] == id) {
+                        postLiked.splice(i, 1);
+                        $window.sessionStorage.postLiked = postLiked;
+                        
+                        break;
+                    }
+                }
+            }
         }
     }
 });

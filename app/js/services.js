@@ -70,11 +70,19 @@ appServices.factory('PostService', function($http) {
 
         update: function(post) {
             return $http.put(options.api.base_url + '/post', {'post': post});
+        },
+
+        like: function(id) {
+            return $http.post(options.api.base_url  + '/post/like', {'id': id});
+        },
+
+        unlike: function(id) {
+            return $http.post(options.api.base_url  + '/post/unlike', {'id': id}); 
         }
     };
 });
 
-appServices.factory('UserService', function($http) {
+appServices.factory('UserService', function ($http) {
     return {
         signIn: function(username, password) {
             return $http.post(options.api.base_url + '/user/signin', {username: username, password: password});
@@ -86,6 +94,52 @@ appServices.factory('UserService', function($http) {
 
         register: function(username, password, passwordConfirmation) {
             return $http.post(options.api.base_url + '/user/register', {username: username, password: password, passwordConfirmation: passwordConfirmation });
+        }
+    }
+});
+
+appServices.factory('LikeService', function ($window) {
+    //Contains post ids already liked by the user
+    var postLiked = [];
+
+    if ($window.sessionStorage && $window.sessionStorage.postLiked) {
+        postLiked.push($window.sessionStorage.postLiked);
+    }
+
+
+    return {
+        isAlreadyLiked: function(id) {
+            if (id != null) {
+                for (var i in postLiked) {
+                    if (postLiked[i] == id) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            return false;
+        },
+
+        like: function(id) {
+            if (!this.isAlreadyLiked(id)) {
+                postLiked.push(id);
+                $window.sessionStorage.postLiked = postLiked;
+            }
+        },
+
+        unlike: function(id) {
+            if (this.isAlreadyLiked(id)) {
+                for (var i in postLiked) {
+                    if (postLiked[i] == id) {
+                        postLiked.splice(i, 1);
+                        $window.sessionStorage.postLiked = postLiked;
+                        
+                        break;
+                    }
+                }
+            }
         }
     }
 });

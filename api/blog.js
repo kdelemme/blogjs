@@ -34,6 +34,12 @@ app.get('/post/all', jwt({secret: secret.secretToken}), routes.posts.listAll);
 //Get the post id
 app.get('/post/:id', routes.posts.read); 
 
+//Like the post id
+app.post('/post/like', routes.posts.like);
+
+//Unlike the post id
+app.post('/post/unlike', routes.posts.unlike);
+
 //Get posts by tag
 app.get('/tag/:tagName', routes.posts.listByTag); 
 

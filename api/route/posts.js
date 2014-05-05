@@ -1,6 +1,6 @@
 var db = require('../config/database.js');
 
-var publicFields = '_id title url tags content created';
+var publicFields = '_id title url tags content created likes';
 
 exports.list = function(req, res) {
 	var query = db.postModel.find({is_published: true});
@@ -65,6 +65,40 @@ exports.read = function(req, res) {
   		}
 	});
 };
+
+exports.like = function(req, res) {
+	var id = req.body.id || '';
+	if (id == '') {
+		return res.send(400);
+	}
+
+
+	db.postModel.update({_id: id}, { $inc: { likes: 1 } }, function(err, nbRows, raw) {
+		if (err) {
+			console.log(err);
+			return res.send(400);
+		}
+
+		return res.send(200);
+	});
+}
+
+exports.unlike = function(req, res) {
+	var id = req.body.id || '';
+	if (id == '') {
+		return res.send(400);
+	}
+
+
+	db.postModel.update({_id: id}, { $inc: { likes: -1 } }, function(err, nbRows, raw) {
+		if (err) {
+			console.log(err);
+			return res.send(400);
+		}
+
+		return res.send(200);
+	});	
+}
 
 exports.create = function(req, res) {
 	if (!req.user) {

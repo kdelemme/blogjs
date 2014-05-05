@@ -15,4 +15,11 @@
     <div class="post-content">
         <p ng-bind-html="post.content"></p>
     </div>
+    <footer class="post-footer">
+        
+        <button ng-click="likePost()" class="btn btn-xs btn-success" ng-hide="isAlreadyLiked">Like</button>
+        <button ng-click="unlikePost()" class="btn btn-xs btn-success" ng-show="isAlreadyLiked">Unlike</button>
+        {{post.likes}} {{ post.likes > 1 ? 'Likes' : 'Like' }}
+
+    </footer>
 </section>
