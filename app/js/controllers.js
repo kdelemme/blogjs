@@ -42,7 +42,7 @@ appControllers.controller('AdminPostListCtrl', ['$scope', 'PostService',
         });
 
         $scope.updatePublishState = function updatePublishState(post, shouldPublish) {
-            if (post !== undefined && shouldPublish !== undefined) {
+            if (post != undefined && shouldPublish != undefined) {
 
                 PostService.changePublishState(post._id, shouldPublish).success(function(data) {
                     var posts = $scope.posts;
@@ -85,15 +85,15 @@ appControllers.controller('AdminPostCreateCtrl', ['$scope', '$location', 'PostSe
         $('#textareaContent').wysihtml5({"font-styles": false});
 
         $scope.save = function save(post, shouldPublish) {
-            if (post !== undefined 
-                && post.title !== undefined
+            if (post != undefined 
+                && post.title != undefined
                 && post.tags != undefined) {
 
                 var content = $('#textareaContent').val();
-                if (content !== undefined) {
+                if (content != undefined) {
                     post.content = content;
 
-                    if (shouldPublish !== undefined && shouldPublish == true) {
+                    if (shouldPublish != undefined && shouldPublish == true) {
                         post.is_published = true;
                     } else {
                         post.is_published = false;
