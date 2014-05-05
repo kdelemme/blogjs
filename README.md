@@ -12,35 +12,35 @@ BlogJS is a simple blog application built with AngularJS, Node.js and MongoDB. C
 - [x] Delete Article
 - [x] Add tags to Article
 - [x] Add Authentication to the administration
-- [ ] Add snapshot for Google Crawling bot
+- [x] Add registration for new user
+- [ ] Add users management
+- [ ] Add Like to post
+- [ ] Add Comments to post
+- [ ] Add Like to comment
 
 ## Installation
 
-Get the sources with `git clone https://github.com/kdelemme/blogjs.git`
+Clone the repository with: `kevin@home:/$ git clone https://github.com/kdelemme/blogjs.git`
 
-## Run
+### Build angularjs app
 
-### Build
+The build result is already available, but if you want to build it yourself, install gulp and the dependencies, then run it.
 
-The build result is already available, but if you want to build it yourself, install gulp: 
+install gulp and the gulp dependencies: `kevin@home:/blogjs$ npm install`
 
-Under blogjs/ directory:
+Edit app/js/app.js and replace the value of `options.api.base_url` to match your server configuration.
 
-install gulp and the gulp plugins: `npm install gulp gulp-concat --save-dev`
+Run gulp to build the scripts of the AngularJS app with: `kevin@home:/blogjs$ gulp`
 
-Run gulp to build the scripts of the AngularJS app with: `gulp`
+### Install Nodejs App
 
-### Back-end
-
-Go to the api folder and install the dependencies: `npm install bcrypt express mongoose express-jwt jsonwebtoken`
+Go to the api folder and install the dependencies: `kevin@home:/blogjs/api$ npm install`
 
 Edit api/blog.js and replace the value of Access-Control-Allow-Origin to match your server configuration.
 
-Run the application: `node blog.js`
+Run the application: `kevin@home:/blogjs/api$ node blog.js`
 
-### Front-end
-
-Edit app/js/app.js and replace the value of `options.api.base_url` to match your server configuration.
+## Run
 
 You can now open your browser: `http://localhost/blogjs/app`
 
