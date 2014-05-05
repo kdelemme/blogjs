@@ -4,7 +4,13 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "express": "3.x",
-    "prerender-node": "~0.1.15"
+    "express-jwt": "~0.2.1",
+    "jsonwebtoken": "~0.4.0",
+    "bcrypt": "~0.7.8",
+    "express": "~4.1.1",
+    "mongoose": "~3.8.8",
+    "json": "0.0.14",
+    "body-parser": "~1.0.2",
+    "morgan": "~1.0.1"
   }
 }

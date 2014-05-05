@@ -1,19 +1,20 @@
 var express = require('express');
 var app = express();
 var jwt = require('express-jwt');
+var bodyParser = require('body-parser'); //bodyparser + json + urlencoder
+var morgan  = require('morgan'); // logger
 var db = require('./config/database');
 var secret = require('./config/secret');
 
+app.listen(3001);
+app.use(bodyParser());
+app.use(morgan());
 
 //Routes
 var routes = {};
 routes.posts = require('./route/posts.js');
 routes.users = require('./route/users.js');
 
-app.listen(3001);
-app.use(express.json());
-app.use(express.urlencoded());
-app.use(express.logger());
 
 app.all('*', function(req, res, next) {
   res.set('Access-Control-Allow-Origin', 'http://localhost');

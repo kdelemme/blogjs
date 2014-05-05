@@ -3,9 +3,8 @@
   "description": "Blog Builder",
   "version": "0.0.1",
   "private": true,
-  "dependencies": {},
-  "devDependencies": {
-    "gulp": "~3.6.2",
-    "gulp-concat": "~2.2.0"
+  "dependencies": {
+    "gulp-concat": "~2.2.0",
+    "gulp": "~3.6.2"
   }
 }
