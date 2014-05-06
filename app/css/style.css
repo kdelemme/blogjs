@@ -79,3 +79,7 @@ a, a:focus, a:hover {
 	background-color: #235A9F;
 	border-color: rgb(16, 76, 128);
 }
+
+.post-footer {
+	margin-top: 1.8em;
+}

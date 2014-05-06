@@ -14,7 +14,7 @@ BlogJS is a simple blog application built with AngularJS, Node.js and MongoDB. C
 - [x] Add Authentication to the administration
 - [x] Add registration for new user
 - [ ] Add users management
-- [ ] Add Like to post
+- [x] Add Like to post
 - [ ] Add Comments to post
 - [ ] Add Like to comment
 
