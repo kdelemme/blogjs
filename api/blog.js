@@ -3,7 +3,7 @@ var app = express();
 var jwt = require('express-jwt');
 var bodyParser = require('body-parser'); //bodyparser + json + urlencoder
 var morgan  = require('morgan'); // logger
-var db = require('./config/database');
+var tokenManager = require('./config/token_manager');
 var secret = require('./config/secret');
 
 app.listen(3001);
@@ -28,8 +28,7 @@ app.all('*', function(req, res, next) {
 //Get all published post
 app.get('/post', routes.posts.list);
 
-//Get all posts
-app.get('/post/all', jwt({secret: secret.secretToken}), routes.posts.listAll);
+
 
 //Get the post id
 app.get('/post/:id', routes.posts.read); 
@@ -52,13 +51,16 @@ app.post('/user/signin', routes.users.signin);
 //Logout
 app.get('/user/logout', jwt({secret: secret.secretToken}), routes.users.logout); 
 
+//Get all posts
+app.get('/post/all', jwt({secret: secret.secretToken}), tokenManager.verifyToken, routes.posts.listAll);
+
 //Create a new post
-app.post('/post', jwt({secret: secret.secretToken}), routes.posts.create); 
+app.post('/post', jwt({secret: secret.secretToken}), tokenManager.verifyToken , routes.posts.create); 
 
 //Edit the post id
-app.put('/post', jwt({secret: secret.secretToken}), routes.posts.update); 
+app.put('/post', jwt({secret: secret.secretToken}), tokenManager.verifyToken, routes.posts.update); 
 
 //Delete the post id
-app.delete('/post/:id', jwt({secret: secret.secretToken}), routes.posts.delete); 
+app.delete('/post/:id', jwt({secret: secret.secretToken}), tokenManager.verifyToken, routes.posts.delete); 
 
 console.log('Blog API is starting on port 3001');

@@ -13,14 +13,49 @@ BlogJS is a simple blog application built with AngularJS, Node.js and MongoDB. C
 - [x] Add tags to Article
 - [x] Add Authentication to the administration
 - [x] Add registration for new user
+- [x] Handle Logout
 - [ ] Add users management
 - [x] Add Like to post
 - [ ] Add Comments to post
 - [ ] Add Like to comment
 
+
+## Dependencies
+
+You need `redis-2.8.9` up and running on port `6379`
+
+You need `mongodb-2.4.10` up and running on port `27017`
+
 ## Installation
 
 Clone the repository with: `kevin@home:/$ git clone https://github.com/kdelemme/blogjs.git`
+
+### Start Redis
+
+Start your redis instance:
+```bash
+kevin@home:/var/www/angular/blogjs$ redis-server 
+                _._                                                  
+           _.-``__ ''-._                                             
+      _.-``    `.  `_.  ''-._           Redis 2.8.9 (00000000/0) 64 bit
+  .-`` .-```.  ```\/    _.,_ ''-._                                   
+ (    '      ,       .-`  | `,    )     Running in stand alone mode
+ |`-._`-...-` __...-.``-._|'` _.-'|     Port: 6379
+ |    `-._   `._    /     _.-'    |     PID: 13499
+  `-._    `-._  `-./  _.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |           http://redis.io        
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+ |`-._`-._    `-.__.-'    _.-'_.-'|                                  
+ |    `-._`-._        _.-'_.-'    |                                  
+  `-._    `-._`-.__.-'_.-'    _.-'                                   
+      `-._    `-.__.-'    _.-'                                       
+          `-._        _.-'                                           
+              `-.__.-'                                               
+
+[13499] 12 May 19:22:41.172 # Server started, Redis version 2.8.9
+[13499] 12 May 19:22:41.172 * The server is now ready to accept connections on port 6379
+```
 
 ### Build angularjs app
 
@@ -53,6 +88,7 @@ To access the Administration, go to `http://localhost/blogjs/app/#/admin/login`
 * AngularJS
 * Bootstrap
 * MongoDB
+* Redis
 * Node.js
 
 ## Licence

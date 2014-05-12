@@ -1,6 +1,8 @@
-var db = require('../config/database');
+var db = require('../config/mongo_database');
 var jwt = require('jsonwebtoken');
 var secret = require('../config/secret');
+var redisClient = require('../config/redis_database').redisClient;
+var tokenManager = require('../config/token_manager');
 
 exports.signin = function(req, res) {
 	var username = req.body.username || '';
@@ -26,7 +28,7 @@ exports.signin = function(req, res) {
 				return res.send(401);
             }
 
-			var token = jwt.sign(user._id, secret.secretToken, { expiresInMinutes: 60 });
+			var token = jwt.sign({id: user._id}, secret.secretToken, { expiresInMinutes: tokenManager.TOKEN_EXPIRATION });
 			
 			return res.json({token:token});
 		});
@@ -36,11 +38,13 @@ exports.signin = function(req, res) {
 
 exports.logout = function(req, res) {
 	if (req.user) {
+		tokenManager.expireToken(req.headers);
+
 		delete req.user;	
-		res.send(200);
+		return res.send(200);
 	}
 	else {
-		res.send(401);
+		return res.send(401);
 	}
 }
 

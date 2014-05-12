@@ -1,4 +1,4 @@
-var db = require('../config/database.js');
+var db = require('../config/mongo_database.js');
 
 var publicFields = '_id title url tags content created likes';
 
