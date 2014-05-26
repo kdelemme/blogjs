@@ -375,7 +375,11 @@ appServices.factory('TokenInterceptor', function ($q, $window, $location, Authen
             return $q.reject(rejection);
         },
 
+        /* Set Authentication.isAuthenticated to true if 200 received */
         response: function (response) {
+            if (response != null && response.status == 200 && $window.sessionStorage.token && !AuthenticationService.isAuthenticated) {
+                AuthenticationService.isAuthenticated = true;
+            }
             return response || $q.when(response);
         },
 
