@@ -28,7 +28,8 @@ app.all('*', function(req, res, next) {
 //Get all published post
 app.get('/post', routes.posts.list);
 
-
+//Get all posts
+app.get('/post/all', jwt({secret: secret.secretToken}), tokenManager.verifyToken, routes.posts.listAll);
 
 //Get the post id
 app.get('/post/:id', routes.posts.read); 
@@ -51,8 +52,13 @@ app.post('/user/signin', routes.users.signin);
 //Logout
 app.get('/user/logout', jwt({secret: secret.secretToken}), routes.users.logout); 
 
-//Get all posts
-app.get('/post/all', jwt({secret: secret.secretToken}), tokenManager.verifyToken, routes.posts.listAll);
+//List all users
+app.get('/user', jwt({secret: secret.secretToken}), tokenManager.verifyToken, routes.users.listAll);
+
+//Read user
+app.get('/user/:id', jwt({secret: secret.secretToken}), tokenManager.verifyToken, routes.users.read);
+
+
 
 //Create a new post
 app.post('/post', jwt({secret: secret.secretToken}), tokenManager.verifyToken , routes.posts.create); 
