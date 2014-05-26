@@ -52,14 +52,6 @@ app.post('/user/signin', routes.users.signin);
 //Logout
 app.get('/user/logout', jwt({secret: secret.secretToken}), routes.users.logout); 
 
-//List all users
-app.get('/user', jwt({secret: secret.secretToken}), tokenManager.verifyToken, routes.users.listAll);
-
-//Read user
-app.get('/user/:id', jwt({secret: secret.secretToken}), tokenManager.verifyToken, routes.users.read);
-
-
-
 //Create a new post
 app.post('/post', jwt({secret: secret.secretToken}), tokenManager.verifyToken , routes.posts.create); 
 
