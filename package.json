@@ -5,6 +5,8 @@
   "private": true,
   "dependencies": {
     "gulp-concat": "~2.2.0",
-    "gulp": "~3.6.2"
+    "gulp": "~3.6.2",
+    "less": "~1.7.0",
+    "gulp-less": "~1.2.3"
   }
 }
