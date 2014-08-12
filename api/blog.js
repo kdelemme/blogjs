@@ -14,6 +14,7 @@ app.use(morgan());
 var routes = {};
 routes.posts = require('./route/posts.js');
 routes.users = require('./route/users.js');
+routes.rss = require('./route/rss.js');
 
 
 app.all('*', function(req, res, next) {
@@ -60,5 +61,8 @@ app.put('/post', jwt({secret: secret.secretToken}), tokenManager.verifyToken, ro
 
 //Delete the post id
 app.delete('/post/:id', jwt({secret: secret.secretToken}), tokenManager.verifyToken, routes.posts.delete); 
+
+//Serve the rss feed
+app.get('/rss', routes.rss.index);
 
 console.log('Blog API is starting on port 3001');
