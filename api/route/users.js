@@ -30,7 +30,7 @@ exports.signin = function(req, res) {
 
 			var token = jwt.sign({id: user._id}, secret.secretToken, { expiresInMinutes: tokenManager.TOKEN_EXPIRATION });
 
-			return res.json({token:token, user: user.username});
+			return res.json({token:token});
 		});
 
 	});
