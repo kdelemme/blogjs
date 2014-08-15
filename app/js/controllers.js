@@ -246,7 +246,7 @@ appControllers.controller('AdminUserCtrl', ['$rootScope', '$scope', '$location',
                     $window.sessionStorage.user = username;
                     $window.sessionStorage.token = data.token;
                     $rootScope.$broadcast('userchanged', {user: data.user, isLogged: true});
-                    $location.path("/admin/login");
+                    $location.path("/admin");
                 }).error(function(status, data) {
                     console.log(status);
                     console.log(data);
