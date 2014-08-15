@@ -206,7 +206,7 @@ appControllers.controller('AdminUserCtrl', ['$rootScope', '$scope', '$location',
 
                 UserService.signIn(username, password).success(function(data) {
                     AuthenticationService.isAuthenticated = true;
-                    $window.sessionStorage.user = data.user;
+                    $window.sessionStorage.user = username;
                     $window.sessionStorage.token = data.token;
                     $rootScope.$broadcast('userchanged', {user: data.user, isLogged: true});
                     $location.path("/admin");
@@ -242,6 +242,10 @@ appControllers.controller('AdminUserCtrl', ['$rootScope', '$scope', '$location',
             }
             else {
                 UserService.register(username, password, passwordConfirm).success(function(data) {
+                    AuthenticationService.isAuthenticated = true;
+                    $window.sessionStorage.user = username;
+                    $window.sessionStorage.token = data.token;
+                    $rootScope.$broadcast('userchanged', {user: data.user, isLogged: true});
                     $location.path("/admin/login");
                 }).error(function(status, data) {
                     console.log(status);

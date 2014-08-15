@@ -7,9 +7,9 @@ var tokenManager = require('../config/token_manager');
 exports.signin = function(req, res) {
 	var username = req.body.username || '';
 	var password = req.body.password || '';
-	
+
 	if (username == '' || password == '') { 
-		return res.send(401); 
+		return res.send(401);
 	}
 
 	db.userModel.findOne({username: username}, function (err, user) {
@@ -21,7 +21,7 @@ exports.signin = function(req, res) {
 		if (user == undefined) {
 			return res.send(401);
 		}
-		
+
 		user.comparePassword(password, function(isMatch) {
 			if (!isMatch) {
 				console.log("Attempt failed to login with " + user.username);
@@ -29,7 +29,7 @@ exports.signin = function(req, res) {
             }
 
 			var token = jwt.sign({id: user._id}, secret.secretToken, { expiresInMinutes: tokenManager.TOKEN_EXPIRATION });
-			
+
 			return res.json({token:token});
 		});
 
@@ -40,7 +40,7 @@ exports.logout = function(req, res) {
 	if (req.user) {
 		tokenManager.expireToken(req.headers);
 
-		delete req.user;	
+		delete req.user;
 		return res.send(200);
 	}
 	else {
@@ -65,8 +65,9 @@ exports.register = function(req, res) {
 		if (err) {
 			console.log(err);
 			return res.send(500);
-		}	
-		
+		}
+		var token = jwt.sign({id: user._id}, secret.secretToken, { expiresInMinutes: tokenManager.TOKEN_EXPIRATION });
+
 		db.userModel.count(function(err, counter) {
 			if (err) {
 				console.log(err);
@@ -81,11 +82,11 @@ exports.register = function(req, res) {
 					}
 
 					console.log('First user created as an Admin');
-					return res.send(200);
+					return res.json({token:token});
 				});
-			} 
+			}
 			else {
-				return res.send(200);
+				return res.json({token:token});
 			}
 		});
 	});
