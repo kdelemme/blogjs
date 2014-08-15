@@ -1,3 +1,14 @@
+appControllers.controller('UserSessionCtrl', ['$rootScope', '$scope', '$window',
+    function($rootScope, $scope, $window) {
+        $scope._user_ = $window.sessionStorage.user;
+        $scope.isLogged = false;
+        $rootScope.$on('userchanged', function (event, data) {
+            if ('user' in data) $scope._user_ = data.user;
+            $scope.isLogged = !!data.isLogged;
+        });
+    }
+]);
+
 appControllers.controller('PostListCtrl', ['$scope', '$sce', 'PostService',
     function PostListCtrl($scope, $sce, PostService) {
 
@@ -8,7 +19,7 @@ appControllers.controller('PostListCtrl', ['$scope', '$sce', 'PostService',
                 data[postKey].content = $sce.trustAsHtml(data[postKey].content);
             }
 
-            $scope.posts = data;            
+            $scope.posts = data;
         }).error(function(data, status) {
             console.log(status);
             console.log(data);
@@ -64,7 +75,7 @@ appControllers.controller('PostViewCtrl', ['$scope', '$routeParams', '$location'
 ]);
 
 
-appControllers.controller('AdminPostListCtrl', ['$scope', 'PostService', 
+appControllers.controller('AdminPostListCtrl', ['$scope', 'PostService',
     function AdminPostListCtrl($scope, PostService) {
         $scope.posts = [];
 
@@ -116,7 +127,7 @@ appControllers.controller('AdminPostCreateCtrl', ['$scope', '$location', 'PostSe
         $('#textareaContent').wysihtml5({"font-styles": false});
 
         $scope.save = function save(post, shouldPublish) {
-            if (post != undefined 
+            if (post != undefined
                 && post.title != undefined
                 && post.tags != undefined) {
 
@@ -156,7 +167,7 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$loca
         });
 
         $scope.save = function save(post, shouldPublish) {
-            if (post !== undefined 
+            if (post !== undefined
                 && post.title !== undefined && post.title != "") {
 
                 var content = $('#textareaContent').val();
@@ -173,7 +184,7 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$loca
                     if (Object.prototype.toString.call(post.tags) !== '[object Array]') {
                         post.tags = post.tags.split(',');
                     }
-                    
+
                     PostService.update(post).success(function(data) {
                         $location.path("/admin");
                     }).error(function(status, data) {
@@ -186,8 +197,8 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$loca
     }
 ]);
 
-appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'UserService', 'AuthenticationService',  
-    function AdminUserCtrl($scope, $location, $window, UserService, AuthenticationService) {
+appControllers.controller('AdminUserCtrl', ['$rootScope', '$scope', '$location', '$window', 'UserService', 'AuthenticationService',
+    function AdminUserCtrl($rootScope, $scope, $location, $window, UserService, AuthenticationService) {
 
         //Admin User Controller (signIn, logOut)
         $scope.signIn = function signIn(username, password) {
@@ -195,7 +206,9 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'U
 
                 UserService.signIn(username, password).success(function(data) {
                     AuthenticationService.isAuthenticated = true;
+                    $window.sessionStorage.user = data.user;
                     $window.sessionStorage.token = data.token;
+                    $rootScope.$broadcast('userchanged', {user: data.user, isLogged: true});
                     $location.path("/admin");
                 }).error(function(status, data) {
                     console.log(status);
@@ -206,10 +219,12 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'U
 
         $scope.logOut = function logOut() {
             if (AuthenticationService.isAuthenticated) {
-                
+
                 UserService.logOut().success(function(data) {
                     AuthenticationService.isAuthenticated = false;
+                    delete $window.sessionStorage.user;
                     delete $window.sessionStorage.token;
+                    $rootScope.$broadcast('userchanged', {user: '', isLogged: false});
                     $location.path("/");
                 }).error(function(status, data) {
                     console.log(status);

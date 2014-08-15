@@ -11,7 +11,7 @@ options.api = {};
 options.api.base_url = "http://localhost:3001";
 
 
-app.config(['$locationProvider', '$routeProvider', 
+app.config(['$locationProvider', '$routeProvider',
   function($location, $routeProvider) {
     $routeProvider.
         when('/', {
@@ -66,8 +66,11 @@ app.config(function ($httpProvider) {
 
 app.run(function($rootScope, $location, $window, AuthenticationService) {
     $rootScope.$on("$routeChangeStart", function(event, nextRoute, currentRoute) {
+        // whether user is logged in (weak validation)
+        var isLogged = $window.sessionStorage.token != null;
+        $rootScope.$broadcast('userchanged', {isLogged: isLogged});
         //redirect only if both isAuthenticated is false and no token is set
-        if (nextRoute != null && nextRoute.access != null && nextRoute.access.requiredAuthentication 
+        if (nextRoute != null && nextRoute.access != null && nextRoute.access.requiredAuthentication
             && !AuthenticationService.isAuthenticated && !$window.sessionStorage.token) {
 
             $location.path("/admin/login");

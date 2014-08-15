@@ -15,9 +15,23 @@
     <link href="dist/css/font-awesome.min.css" rel="stylesheet">
     <link href="lib/wysiwyg/css/bootstrap3-wysiwyg5.css" rel="stylesheet">
   </head>
-  
-    <body ng-app="app">
 
+    <body ng-app="app">
+        <nav ng-controller="UserSessionCtrl">
+          <div class="navbar navbar-default">
+            <div class="navbar-header">
+                <i class="fa fa-code"></i>Welcome! {{ _user_ }}</a>
+            </div>
+            <div class="nav navbar-nav navbar-right" ng-show="isLogged">
+                <a class="navbar-brand" href="#/admin/post/create">New Post</a>
+                <a class="navbar-brand" href="javascript:void(0)" ng-controller="AdminUserCtrl" ng-click="logOut()">Log Out</a>
+            </div>
+            <div class="nav navbar-nav navbar-right" ng-show="!isLogged">
+                <a class="navbar-brand" href="#/admin/login">Log In</a>
+                <a class="navbar-brand" href="#/admin/register">Register</a>
+            </div>
+          </div>
+        </nav>
         <div class="container col-sm-12">
 
             <header class="header">
@@ -29,7 +43,7 @@
             </header>
 
             <div ng-view></div>
-            
+
         </div>
 
         <script src="lib/angular/angular.min.js"></script>
