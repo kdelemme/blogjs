@@ -152,7 +152,7 @@ var _update = function(post, callback) {
 
 	var updatePost = {};
 
-	if (post.title != null && post.title != "") {
+	if (post.title != null && post.title !== "") {
 		updatePost.title = post.title;
 	}
 
@@ -169,7 +169,7 @@ var _update = function(post, callback) {
 		updatePost.is_published = post.is_published;
 	}
 
-	if (post.content != null && post.content != "") {
+	if (post.content != null && post.content !== "") {
 		updatePost.content = post.content;
 	}
 
@@ -202,7 +202,7 @@ exports.update = function(req, res) {
 				console.log(err ? err : 'Bad post id: ' + post._id);
 				return res.send(400, err ? err.message : 'Post not found.');
 			}
-			if (result.uid != req.user.id) {
+			if (result.uid !== req.user.id) {
 				return res.send(400, 'Only the author can update.');
 			}
 			_update(post, function (code, message) {
@@ -219,7 +219,7 @@ exports.delete = function(req, res) {
 	}
 
 	var id = req.params.id;
-	if (id == null || id == '') {
+	if (id == null || id === '') {
 		res.send(400, 'Post not specified.');
 	}
 
@@ -237,7 +237,7 @@ exports.delete = function(req, res) {
 				return res.send(400, err ? err.message : 'Post not found.');
 			}
 
-			if (!user.isAdmin && user.id != result.str) {
+			if (!user.isAdmin && user.id !== result.str) {
 				return res.send(400, 'Requires authorization.');
 			}
 
