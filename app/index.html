@@ -20,10 +20,12 @@
         <nav ng-controller="UserSessionCtrl">
           <div class="navbar navbar-default">
             <div class="navbar-header">
-                <i class="fa fa-code"></i>Welcome! {{ _user_ }}</a>
+                <a class="navbar-brand" href="#/">
+                <i class="fa fa-code"></i>Welcome!</a>
             </div>
             <div class="nav navbar-nav navbar-right" ng-show="isLogged">
                 <a class="navbar-brand" href="#/admin/post/create">New Post</a>
+                <a class="navbar-brand" href="#/admin">{{_user_}}</a>
                 <a class="navbar-brand" href="javascript:void(0)" ng-controller="AdminUserCtrl" ng-click="logOut()">Log Out</a>
             </div>
             <div class="nav navbar-nav navbar-right" ng-show="!isLogged">
