@@ -1,0 +1,29 @@
+<section class="post">
+    <ol class="breadcrumb">
+        <li><a href="#/">Blog</a></li>
+        <li><a href="#/admin">Administration</a></li>
+        <li class="active">{{post.title}}</li>
+    </ol>
+
+    <header class="post-header">
+        <img class="post-avatar" alt="Kevin Delemme" height="52" width="52" src="img/avatar.jpg">
+        <div class="post-meta"><i class="fa fa-bullseye"></i> Posted on {{post.created | date:'medium'}}</div>
+        <div class="post-meta"><i class="fa fa-thumbs-up"></i> {{post.likes}}</div>
+        <div class="post-meta">
+        	<ul class="list-inline">
+                <i class="fa fa-tags"></i>
+                <li ng-repeat="tag in post.tags">
+                    <a class="label label-success" href="#/tag/{{tag}}">{{tag}}</a>
+                </li>
+            </ul>
+        </div>
+    </header>
+    <div class="post-content">
+        <p ng-bind-html="post.content"></p>
+    </div>
+    <footer class="post-footer">
+        <button ng-click="likePost()" class="btn btn-xs btn-success" ng-hide="isAlreadyLiked">Like</button>
+        <button ng-click="unlikePost()" class="btn btn-xs btn-success" ng-show="isAlreadyLiked">Unlike</button>
+        {{post.likes}} <i class="fa fa-thumbs-up"></i>
+    </footer>
+</section>
