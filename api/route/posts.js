@@ -32,7 +32,7 @@ exports.listAll = function(req, res) {
 			console.log(err ? err : 'Bad user id: ' + post._id);
 			return res.send(400, err ? err.message : 'User not found.');
 		}
-		var q = user.isAdmin ? {} : {uid: req.user.id},
+		var q = user.is_admin ? {} : {uid: req.user.id},
 			query = db.postModel.find(q, {tags: 0, content: 0});
 		query.sort('-created');
 		query.exec(function(err, results) {
@@ -237,7 +237,7 @@ exports.delete = function(req, res) {
 				return res.send(400, err ? err.message : 'Post not found.');
 			}
 
-			if (!user.isAdmin && user.id !== result.str) {
+			if (!user.is_admin && user.id !== result.str) {
 				return res.send(400, 'Requires authorization.');
 			}
 
