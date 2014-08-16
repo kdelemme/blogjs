@@ -67,8 +67,9 @@ app.config(function ($httpProvider) {
 app.run(function($rootScope, $location, $window, AuthenticationService) {
     $rootScope.$on("$routeChangeStart", function(event, nextRoute, currentRoute) {
         // whether user is logged in (weak validation)
-        var isLogged = $window.sessionStorage.token != null;
-        $rootScope.$broadcast('userchanged', {isLogged: isLogged});
+        var isLogged = $window.sessionStorage.token != null,
+            user = $window.sessionStorage.user;
+        $rootScope.$broadcast('evtUserStatus', {user: user, isLogged: isLogged});
         //redirect only if both isAuthenticated is false and no token is set
         if (nextRoute != null && nextRoute.access != null && nextRoute.access.requiredAuthentication
             && !AuthenticationService.isAuthenticated && !$window.sessionStorage.token) {

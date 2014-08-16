@@ -1,8 +1,8 @@
-appControllers.controller('UserSessionCtrl', ['$rootScope', '$scope', '$window',
-    function($rootScope, $scope, $window) {
+appControllers.controller('UserSessionCtrl', ['$scope', '$window',
+    function($scope, $window) {
         $scope._user_ = $window.sessionStorage.user;
         $scope.isLogged = false;
-        $rootScope.$on('userchanged', function (event, data) {
+        $scope.$on('evtUserStatus', function (event, data) {
             if ('user' in data) $scope._user_ = data.user;
             $scope.isLogged = !!data.isLogged;
         });
@@ -208,7 +208,7 @@ appControllers.controller('AdminUserCtrl', ['$rootScope', '$scope', '$location',
                     AuthenticationService.isAuthenticated = true;
                     $window.sessionStorage.user = username;
                     $window.sessionStorage.token = data.token;
-                    $rootScope.$broadcast('userchanged', {user: data.user, isLogged: true});
+                    $rootScope.$broadcast('evtUserStatus', {user: data.user, isLogged: true});
                     $location.path("/admin");
                 }).error(function(status, data) {
                     console.log(status);
@@ -224,7 +224,7 @@ appControllers.controller('AdminUserCtrl', ['$rootScope', '$scope', '$location',
                     AuthenticationService.isAuthenticated = false;
                     delete $window.sessionStorage.user;
                     delete $window.sessionStorage.token;
-                    $rootScope.$broadcast('userchanged', {user: '', isLogged: false});
+                    $rootScope.$broadcast('evtUserStatus', {user: '', isLogged: false});
                     $location.path("/");
                 }).error(function(status, data) {
                     console.log(status);
@@ -245,7 +245,7 @@ appControllers.controller('AdminUserCtrl', ['$rootScope', '$scope', '$location',
                     AuthenticationService.isAuthenticated = true;
                     $window.sessionStorage.user = username;
                     $window.sessionStorage.token = data.token;
-                    $rootScope.$broadcast('userchanged', {user: data.user, isLogged: true});
+                    $rootScope.$broadcast('evtUserStatus', {user: data.user, isLogged: true});
                     $location.path("/admin");
                 }).error(function(status, data) {
                     console.log(status);
