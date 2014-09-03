@@ -8,6 +8,7 @@ BlogJS is a simple blog application built with AngularJS, Node.js and MongoDB. C
 ## Article & Demo
 
 Article: http://www.kdelemme.com/2014/03/09/authentication-with-angularjs-and-a-node-js-rest-api/
+
 Demo: http://projects.kdelemme.com/blog/app/#/
 
 ## Features
