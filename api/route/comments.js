@@ -38,7 +38,7 @@ exports.list = function(req, res) {
             var uid = results[i].uid;
             if (j.indexOf(uid) === -1) {
                 j.push( uid );
-                ids.push( db.ObjectId(uid) );
+                ids.push( new db.ObjectId(uid) );
             }
         }
         // search user names and return
