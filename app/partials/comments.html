@@ -1,0 +1,30 @@
+<div ng-controller="CommentCtrl" class="comments">
+    <form class="comment-form" name="EditPostForm" ng-show="{{isLogged}}">
+        <textarea class="form-control" rows="6" ng-model="comment"
+        placeholder="Your comment" required></textarea>
+        <div>
+            <button type="button" class="btn btn-primary btn-sm"
+            ng-click="add()">Add</button>
+            <span class="pull-right text-info">{{comment.length || 0}}</span>
+        </div>
+    </form>
+    <hr>
+    <div class="comment" ng-repeat="c in comments">
+        <div class="comment-user">
+            {{users[c.uid]}}&nbsp;&nbsp;{{c.created | date:'medium'}}
+        </div>
+        <div class="comment-main">
+            <div class="post-content">{{c.content}}</div>
+        </div>
+    </div>
+    <div class="text-center" ng-show="page>1||comments.length>=10">
+        <ul class="pager">
+            <li ng-class="{disabled: page === 1}">
+                <a ng-click="goto(page-1)">Prev</a>
+            </li>
+            <li ng-class="{disabled: comments.length < 10}">
+                <a ng-click="goto(page+1)">Next</a>
+            </li>
+        </ul>
+    </div>
+</div>
