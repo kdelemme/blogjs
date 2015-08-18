@@ -3,16 +3,17 @@ appControllers.controller('PostListCtrl', ['$scope', '$sce', 'PostService',
 
         $scope.posts = [];
 
-        PostService.findAllPublished().success(function(data) {
-            for (var postKey in data) {
-                data[postKey].content = $sce.trustAsHtml(data[postKey].content);
-            }
+        PostService.findAllPublished().
+            then(function(data) {
+                for (var postKey in data) {
+                    data[postKey].content = $sce.trustAsHtml(data[postKey].content);
+                }
 
-            $scope.posts = data;            
-        }).error(function(data, status) {
-            console.log(status);
-            console.log(data);
-        });
+                $scope.posts = data;            
+            }, function(data, status) {
+                console.log(status);
+                console.log(data);
+            });
     }
 ]);
 
@@ -24,39 +25,42 @@ appControllers.controller('PostViewCtrl', ['$scope', '$routeParams', '$location'
 
         $scope.isAlreadyLiked = LikeService.isAlreadyLiked(id);
 
-        PostService.read(id).success(function(data) {
-            data.content = $sce.trustAsHtml(data.content);
-            $scope.post = data;
-        }).error(function(data, status) {
-            console.log(status);
-            console.log(data);
-        });
+        PostService.read(id).
+            then(function(data) {
+                data.content = $sce.trustAsHtml(data.content);
+                $scope.post = data;
+            }, function(data, status) {
+                console.log(status);
+                console.log(data);
+            });
 
         //Like a post
         $scope.likePost = function likePost() {
             if (!LikeService.isAlreadyLiked(id)) {
-                PostService.like(id).success(function(data) {
-                    $scope.post.likes++;
-                    LikeService.like(id);
-                    $scope.isAlreadyLiked = true;
-                }).error(function(data, status) {
-                    console.log(status);
-                    console.log(data);
-                });
+                PostService.like(id).
+                    then(function(data) {
+                        $scope.post.likes++;
+                        LikeService.like(id);
+                        $scope.isAlreadyLiked = true;
+                    }, function(data, status) {
+                        console.log(status);
+                        console.log(data);
+                    });
             }
         };
 
         //Unlike a post
         $scope.unlikePost = function unlikePost() {
             if (LikeService.isAlreadyLiked(id)) {
-                PostService.unlike(id).success(function(data) {
-                    $scope.post.likes--;
-                    LikeService.unlike(id);
-                    $scope.isAlreadyLiked = false;
-                }).error(function(data, status) {
-                    console.log(status);
-                    console.log(data);
-                });
+                PostService.unlike(id).
+                    then(function(data) {
+                        $scope.post.likes--;
+                        LikeService.unlike(id);
+                        $scope.isAlreadyLiked = false;
+                    }, function(data, status) {
+                        console.log(status);
+                        console.log(data);
+                    });
             }
         }
 
@@ -75,18 +79,19 @@ appControllers.controller('AdminPostListCtrl', ['$scope', 'PostService',
         $scope.updatePublishState = function updatePublishState(post, shouldPublish) {
             if (post != undefined && shouldPublish != undefined) {
 
-                PostService.changePublishState(post._id, shouldPublish).success(function(data) {
-                    var posts = $scope.posts;
-                    for (var postKey in posts) {
-                        if (posts[postKey]._id == post._id) {
-                            $scope.posts[postKey].is_published = shouldPublish;
-                            break;
+                PostService.changePublishState(post._id, shouldPublish).
+                    then(function(data) {
+                        var posts = $scope.posts;
+                        for (var postKey in posts) {
+                            if (posts[postKey]._id == post._id) {
+                                $scope.posts[postKey].is_published = shouldPublish;
+                                break;
+                            }
                         }
-                    }
-                }).error(function(status, data) {
-                    console.log(status);
-                    console.log(data);
-                });
+                    }, function(status, data) {
+                        console.log(status);
+                        console.log(data);
+                    });
             }
         }
 
@@ -94,18 +99,19 @@ appControllers.controller('AdminPostListCtrl', ['$scope', 'PostService',
         $scope.deletePost = function deletePost(id) {
             if (id != undefined) {
 
-                PostService.delete(id).success(function(data) {
-                    var posts = $scope.posts;
-                    for (var postKey in posts) {
-                        if (posts[postKey]._id == id) {
-                            $scope.posts.splice(postKey, 1);
-                            break;
+                PostService.delete(id).
+                    then(function(data) {
+                        var posts = $scope.posts;
+                        for (var postKey in posts) {
+                            if (posts[postKey]._id == id) {
+                                $scope.posts.splice(postKey, 1);
+                                break;
+                            }
                         }
-                    }
-                }).error(function(status, data) {
-                    console.log(status);
-                    console.log(data);
-                });
+                    }, function(status, data) {
+                        console.log(status);
+                        console.log(data);
+                    });
             }
         }
     }
@@ -130,12 +136,13 @@ appControllers.controller('AdminPostCreateCtrl', ['$scope', '$location', 'PostSe
                         post.is_published = false;
                     }
 
-                    PostService.create(post).success(function(data) {
-                        $location.path("/admin");
-                    }).error(function(status, data) {
-                        console.log(status);
-                        console.log(data);
-                    });
+                    PostService.create(post).
+                        then(function(data) {
+                            $location.path("/admin");
+                        }, function(status, data) {
+                            console.log(status);
+                            console.log(data);
+                        });
                 }
             }
         }
@@ -147,13 +154,14 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$loca
         $scope.post = {};
         var id = $routeParams.id;
 
-        PostService.read(id).success(function(data) {
-            $scope.post = data;
-            $('#textareaContent').wysihtml5({"font-styles": false});
-            $('#textareaContent').val($sce.trustAsHtml(data.content));
-        }).error(function(status, data) {
-            $location.path("/admin");
-        });
+        PostService.read(id).
+            then(function(data) {
+                $scope.post = data;
+                $('#textareaContent').wysihtml5({"font-styles": false});
+                $('#textareaContent').val($sce.trustAsHtml(data.content));
+            }, function(status, data) {
+                $location.path("/admin");
+            });
 
         $scope.save = function save(post, shouldPublish) {
             if (post !== undefined 
@@ -174,12 +182,13 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$loca
                         post.tags = post.tags.split(',');
                     }
                     
-                    PostService.update(post).success(function(data) {
-                        $location.path("/admin");
-                    }).error(function(status, data) {
-                        console.log(status);
-                        console.log(data);
-                    });
+                    PostService.update(post).
+                        then(function(data) {
+                            $location.path("/admin");
+                        }, function(status, data) {
+                            console.log(status);
+                            console.log(data);
+                        });
                 }
             }
         }
@@ -193,28 +202,30 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'U
         $scope.signIn = function signIn(username, password) {
             if (username != null && password != null) {
 
-                UserService.signIn(username, password).success(function(data) {
-                    AuthenticationService.isAuthenticated = true;
-                    $window.sessionStorage.token = data.token;
-                    $location.path("/admin");
-                }).error(function(status, data) {
-                    console.log(status);
-                    console.log(data);
-                });
+                UserService.signIn(username, password).
+                    then(function(data) {
+                        AuthenticationService.isAuthenticated = true;
+                        $window.sessionStorage.token = data.token;
+                        $location.path("/admin");
+                    }, function(status, data) {
+                        console.log(status);
+                        console.log(data);
+                    });
             }
         }
 
         $scope.logOut = function logOut() {
             if (AuthenticationService.isAuthenticated) {
                 
-                UserService.logOut().success(function(data) {
-                    AuthenticationService.isAuthenticated = false;
-                    delete $window.sessionStorage.token;
-                    $location.path("/");
-                }).error(function(status, data) {
-                    console.log(status);
-                    console.log(data);
-                });
+                UserService.logOut().
+                    then(function(data) {
+                        AuthenticationService.isAuthenticated = false;
+                        delete $window.sessionStorage.token;
+                        $location.path("/");
+                    }, function(status, data) {
+                        console.log(status);
+                        console.log(data);
+                    });
             }
             else {
                 $location.path("/admin/login");
@@ -226,12 +237,13 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'U
                 $location.path("/admin");
             }
             else {
-                UserService.register(username, password, passwordConfirm).success(function(data) {
-                    $location.path("/admin/login");
-                }).error(function(status, data) {
-                    console.log(status);
-                    console.log(data);
-                });
+                UserService.register(username, password, passwordConfirm).
+                    then(function(data) {
+                        $location.path("/admin/login");
+                    }, function(status, data) {
+                        console.log(status);
+                        console.log(data);
+                    });
             }
         }
     }
@@ -244,15 +256,16 @@ appControllers.controller('PostListTagCtrl', ['$scope', '$routeParams', '$sce', 
         $scope.posts = [];
         var tagName = $routeParams.tagName;
 
-        PostService.findByTag(tagName).success(function(data) {
-            for (var postKey in data) {
-                data[postKey].content = $sce.trustAsHtml(data[postKey].content);
-            }
-            $scope.posts = data;
-        }).error(function(status, data) {
-            console.log(status);
-            console.log(data);
-        });
+        PostService.findByTag(tagName).
+            then(function(data) {
+                for (var postKey in data) {
+                    data[postKey].content = $sce.trustAsHtml(data[postKey].content);
+                }
+                $scope.posts = data;
+            }, function(status, data) {
+                console.log(status);
+                console.log(data);
+            });
 
     }
 ]);
