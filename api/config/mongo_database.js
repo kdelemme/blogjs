@@ -5,7 +5,7 @@ var mongodbURL = 'mongodb://localhost/blog';
 var mongodbOptions = { };
 
 mongoose.connect(mongodbURL, mongodbOptions, function (err, res) {
-    if (err) { 
+    if (err) {
         console.log('Connection refused to ' + mongodbURL);
         console.log(err);
     } else {
@@ -34,6 +34,13 @@ var Post = new Schema({
     likes: { type: Number, default: 0 }
 });
 
+// Comment schema
+var Comment = new Schema({
+    uid: { type: String, required: true },
+    pid: { type: String, required: true },
+    content: { type: String, required: true },
+    created: { type: Date, default: Date.now }
+});
 
 // Bcrypt middleware on UserSchema
 User.pre('save', function(next) {
@@ -64,8 +71,13 @@ User.methods.comparePassword = function(password, cb) {
 //Define Models
 var userModel = mongoose.model('User', User);
 var postModel = mongoose.model('Post', Post);
+var comtModel = mongoose.model('Comment', Comment);
 
 
 // Export Models
 exports.userModel = userModel;
 exports.postModel = postModel;
+exports.comtModel = comtModel;
+
+// Export ObjectId
+exports.ObjectId = Schema.ObjectId;

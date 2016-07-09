@@ -8,7 +8,7 @@ appControllers.controller('PostListCtrl', ['$scope', '$sce', 'PostService',
                 data[postKey].content = $sce.trustAsHtml(data[postKey].content);
             }
 
-            $scope.posts = data;            
+            $scope.posts = data;
         }).error(function(data, status) {
             console.log(status);
             console.log(data);
@@ -64,7 +64,7 @@ appControllers.controller('PostViewCtrl', ['$scope', '$routeParams', '$location'
 ]);
 
 
-appControllers.controller('AdminPostListCtrl', ['$scope', 'PostService', 
+appControllers.controller('AdminPostListCtrl', ['$scope', 'PostService',
     function AdminPostListCtrl($scope, PostService) {
         $scope.posts = [];
 
@@ -116,7 +116,7 @@ appControllers.controller('AdminPostCreateCtrl', ['$scope', '$location', 'PostSe
         $('#textareaContent').wysihtml5({"font-styles": false});
 
         $scope.save = function save(post, shouldPublish) {
-            if (post != undefined 
+            if (post != undefined
                 && post.title != undefined
                 && post.tags != undefined) {
 
@@ -156,7 +156,7 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$loca
         });
 
         $scope.save = function save(post, shouldPublish) {
-            if (post !== undefined 
+            if (post !== undefined
                 && post.title !== undefined && post.title != "") {
 
                 var content = $('#textareaContent').val();
@@ -173,7 +173,7 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$loca
                     if (Object.prototype.toString.call(post.tags) !== '[object Array]') {
                         post.tags = post.tags.split(',');
                     }
-                    
+
                     PostService.update(post).success(function(data) {
                         $location.path("/admin");
                     }).error(function(status, data) {
@@ -186,7 +186,7 @@ appControllers.controller('AdminPostEditCtrl', ['$scope', '$routeParams', '$loca
     }
 ]);
 
-appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'UserService', 'AuthenticationService',  
+appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'UserService', 'AuthenticationService',
     function AdminUserCtrl($scope, $location, $window, UserService, AuthenticationService) {
 
         //Admin User Controller (signIn, logOut)
@@ -206,7 +206,7 @@ appControllers.controller('AdminUserCtrl', ['$scope', '$location', '$window', 'U
 
         $scope.logOut = function logOut() {
             if (AuthenticationService.isAuthenticated) {
-                
+
                 UserService.logOut().success(function(data) {
                     AuthenticationService.isAuthenticated = false;
                     delete $window.sessionStorage.token;
@@ -257,3 +257,57 @@ appControllers.controller('PostListTagCtrl', ['$scope', '$routeParams', '$sce', 
     }
 ]);
 
+appControllers.controller('CommentCtrl' , ['$scope', '$location', 'CommentService',
+    function ($scope, $location, CommentService) {
+        var postid = $location.$$path.split('/').slice(-1)[0];
+        $scope.user = [];     // users list that commented
+        $scope.comments = []; // comments list
+        $scope.page = 1;      // current page number
+
+        $scope.$on('evtUserStatus', function (event, data) {
+            // user can comment when logged
+            $scope.isLogged = !!data.isLogged;
+        });
+
+        var getComments = function(query) {
+            CommentService.find(query).success(function(data) {
+                if (!data.comments) { return; }
+                var users = {};
+                for (var i=0; i<data.users.length; i++) {
+                    var u = data.users[i];
+                    users[u._id] = u.username;
+                }
+                $scope.users = users;
+                $scope.comments = data.comments;
+            }).error(function(data, status) {
+                console.log(status);
+                console.log(data);
+            });
+        };
+
+        $scope.goto = function (n) {
+            if (n < 1) {
+                return false;
+            }
+            $scope.page = n;
+            getComments({id: postid, page: n});
+        };
+
+        $scope.add = function () {
+            if (!$scope.comment) {return;}
+            var c = $scope.comment.trim();
+            if (c.length < 6 || c.length > 200) {
+                return false;
+            }
+            CommentService.add(postid, c).success(function(data) {
+                $scope.comment = '';
+                getComments({id: postid, page: 1});
+            }).error(function(data, status) {
+                console.log(status);
+                console.log(data);
+            });
+        };
+        // fetch comments
+        getComments({id: postid, page: 1});
+    }
+]);

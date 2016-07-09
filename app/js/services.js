@@ -55,7 +55,7 @@ appServices.factory('PostService', function($http) {
         read: function(id) {
             return $http.get(options.api.base_url + '/post/' + id);
         },
-        
+
         findAll: function() {
             return $http.get(options.api.base_url + '/post/all');
         },
@@ -81,7 +81,7 @@ appServices.factory('PostService', function($http) {
         },
 
         unlike: function(id) {
-            return $http.post(options.api.base_url  + '/post/unlike', {'id': id}); 
+            return $http.post(options.api.base_url  + '/post/unlike', {'id': id});
         }
     };
 });
@@ -139,11 +139,29 @@ appServices.factory('LikeService', function ($window) {
                     if (postLiked[i] == id) {
                         postLiked.splice(i, 1);
                         $window.sessionStorage.postLiked = postLiked;
-                        
+
                         break;
                     }
                 }
             }
+        }
+    }
+});
+
+appServices.factory('CommentService', function ($http) {
+    return {
+        find: function (query) {
+            var url = options.api.base_url + '/comment/' + query.id;
+            if (query.page) {
+                url += '?page=' + query.page;
+            }
+            return $http.get(url);
+        },
+        add: function (id, content) {
+            return $http.post(options.api.base_url + '/comment', {
+                postid: id,
+                content: content
+            });
         }
     }
 });
