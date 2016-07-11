@@ -11,7 +11,7 @@ options.api = {};
 options.api.base_url = "http://localhost:3001";
 
 
-app.config(['$locationProvider', '$routeProvider', 
+app.config(['$locationProvider', '$routeProvider',
   function($location, $routeProvider) {
     $routeProvider.
         when('/', {
@@ -41,6 +41,10 @@ app.config(['$locationProvider', '$routeProvider',
             controller: 'AdminPostEditCtrl',
             access: { requiredAuthentication: true }
         }).
+        when('/admin/post/view/:id', {
+            templateUrl: 'partials/admin.post.view.html',
+            controller: 'PostViewCtrl'
+        }).
         when('/admin/register', {
             templateUrl: 'partials/admin.register.html',
             controller: 'AdminUserCtrl'
@@ -67,7 +71,7 @@ app.config(function ($httpProvider) {
 app.run(function($rootScope, $location, $window, AuthenticationService) {
     $rootScope.$on("$routeChangeStart", function(event, nextRoute, currentRoute) {
         //redirect only if both isAuthenticated is false and no token is set
-        if (nextRoute != null && nextRoute.access != null && nextRoute.access.requiredAuthentication 
+        if (nextRoute != null && nextRoute.access != null && nextRoute.access.requiredAuthentication
             && !AuthenticationService.isAuthenticated && !$window.sessionStorage.token) {
 
             $location.path("/admin/login");

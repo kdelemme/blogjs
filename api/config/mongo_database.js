@@ -5,7 +5,7 @@ var mongodbURL = 'mongodb://localhost/blog';
 var mongodbOptions = { };
 
 mongoose.connect(mongodbURL, mongodbOptions, function (err, res) {
-    if (err) { 
+    if (err) {
         console.log('Connection refused to ' + mongodbURL);
         console.log(err);
     } else {
@@ -24,6 +24,7 @@ var User = new Schema({
 });
 
 var Post = new Schema({
+    uid: { type: String, required: true },
     title: { type: String, required: true },
     tags: [ {type: String} ],
     is_published: { type: Boolean, default: false },
